@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_GeneratorAsset: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: fb0794c25a004b041ba1a75c8cb4261f, type: 3}
+  m_Name: Emergency FTL-jump complete!
+  m_EditorClassIdentifier: 
+  _id: 1
+  _probability: 1
+  _body: "Emergency FTL-jump complete, Admiral! \n\nWe have survived, barely.\nI have
+    received authenticated signals from the following vessels: LISTPLAYERFLEET.\n\nNo
+    word from CIC and LCOM is dead, so this is all we have for now, I will bring you
+    more information as it becomes available.\n\nI have taken the liberty to accumulate
+    a priority task list, our current top single priority should be FORMATVITAL_PROCESSEDFUEL.
+    \nWe barely have enough for a single jump as of now, and if the <i>Great Evil\u2122</i>
+    shows up again we'll be target practice.\n"
+  _options:
+  - _conditions: 
+    _text: I will take it from here, number one.
+    _tooltip: '+15 FORMATVITAL_PROCESSEDFUEL
+
+      +25 FORMATVITAL_AMMUNITION
+
+      +25 FORMATVITAL_CIVILIANSUPPLIES'
+    _commands: 'modify vital processedfuel 15;
+
+      modify vital ammunition 25;
+
+      modify vital civiliansupplies 25;
+
+      modify progress receivedstartevent true;'
+    _closeAfterSelect: 1

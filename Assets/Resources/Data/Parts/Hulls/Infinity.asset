@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_GeneratorAsset: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 716657ca4439d0f4dbe487e74ef95a3d, type: 3}
+  m_Name: Infinity
+  m_EditorClassIdentifier: 
+  _description: '**RECORDS CLASSIFIED**'
+  _weaponSlots: 4
+  _utilitySlots: 4
+  _hitpoints: 200
+  _movementSpeed: 0.33
+  _rotationSpeed: 0.025
+  _gasStorage: 6
+  _oreStorage: 6
+  _fuelStorage: 12
+  _goodsStorage: 6
+  _maintenanceCosts:
+  - _value: -0.08
+    _mode: 0
+    _target: 0
+    _reason: maintenance
+    _duration: -1
+    _type: 2
+    _setting: 0
+  - _value: -0.3
+    _mode: 0
+    _target: 0
+    _reason: maintenance
+    _duration: -1
+    _type: 0
+    _setting: 0
+  - _value: -0.01
+    _mode: 0
+    _target: 0
+    _reason: maintenance
+    _duration: -1
+    _type: 1
+    _setting: 0
+  _size: 3
+  _model: {fileID: 1498982917946466, guid: 89770fc5c445a9747b1061d98256fa22, type: 3}
+  _destroyedVFX: {fileID: 4970918037939683908, guid: b32860d8988ad254b8686d097dd7daa3,
+    type: 3}
+  _icon: {fileID: 0}

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_GeneratorAsset: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: d8e5040e2987a6246b75d25976a54213, type: 3}
+  m_Name: Pathfinder Cruiser 2
+  m_EditorClassIdentifier: 
+  _name: 
+  _hull: {fileID: 11400000, guid: b97a0f28fdb6d82429d9c93e18476503, type: 2}
+  _weapons:
+  - {fileID: 11400000, guid: 3cc8cb23eab50cb4881f4a0a034c0c6a, type: 2}
+  - {fileID: 11400000, guid: 3cc8cb23eab50cb4881f4a0a034c0c6a, type: 2}
+  _utilities:
+  - {fileID: 11400000, guid: 57f56d478604ce24e8920305b410911b, type: 2}
+  - {fileID: 11400000, guid: 55ad55264dce8d6408b3582bfb247739, type: 2}

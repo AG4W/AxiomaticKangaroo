@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb0794c25a004b041ba1a75c8cb4261f, type: 3}
+  m_Name: Orbital Refinery
+  m_EditorClassIdentifier: 
+  _id: 2000
+  _probability: 1
+  _commands: 
+  _body: 'You have arrived at a neutral <color=yellow>orbital refinery</color>.
+
+
+    For a small fee, you can process FORMATVITAL_NEBULAGAS into FORMATVITAL_PROCESSEDFUEL.'
+  _options:
+  - _conditions: evaluate vital nebulagas 2;
+    _text: Process FORMATVITAL_NEBULAGAS into FORMATVITAL_PROCESSEDFUEL.
+    _tooltip: '-2 FORMATVITAL_NEBULAGAS
+
+      -5 credits;
+
+
+      +1 FORMATVITAL_PROCESSEDFUEL'
+    _commands: 'modify vital processedfuel +1;
+
+      modify vital nebulagas -2;'
+    _closeAfterSelect: 0
+  - _conditions: 
+    _text: Leave.
+    _tooltip: Leave.
+    _commands: 
+    _closeAfterSelect: 1

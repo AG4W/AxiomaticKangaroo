@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_GeneratorAsset: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 716657ca4439d0f4dbe487e74ef95a3d, type: 3}
+  m_Name: Eres
+  m_EditorClassIdentifier: 
+  _description: '**RECORDS CLASSIFIED**'
+  _weaponSlots: 2
+  _utilitySlots: 1
+  _hitpoints: 20
+  _movementSpeed: 3
+  _rotationSpeed: 0.2
+  _gasStorage: 1
+  _oreStorage: 1
+  _fuelStorage: 2
+  _goodsStorage: 1
+  _maintenanceCosts:
+  - _value: -0.02
+    _mode: 0
+    _target: 0
+    _isMaintenance: 1
+    _reason: maintenance
+    _duration: -1
+    _type: 2
+    _setting: 0
+  - _value: -0.1
+    _mode: 0
+    _target: 0
+    _isMaintenance: 1
+    _reason: maintenance
+    _duration: -1
+    _type: 0
+    _setting: 0
+  - _value: -0.01
+    _mode: 0
+    _target: 0
+    _isMaintenance: 1
+    _reason: maintenance
+    _duration: -1
+    _type: 1
+    _setting: 0
+  _size: 1
+  _model: {fileID: 1963097292729412, guid: c3ed1bd9d9c1ac148819ec7b9ddf46cb, type: 3}
+  _destroyedVFX: {fileID: 5831894472829399687, guid: 9c31b7bb417c3f24799c51d44dacf4a0,
+    type: 3}
+  _icon: {fileID: 0}

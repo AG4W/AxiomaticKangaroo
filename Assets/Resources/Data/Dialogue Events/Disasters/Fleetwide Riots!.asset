@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_GeneratorAsset: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: fb0794c25a004b041ba1a75c8cb4261f, type: 3}
+  m_Name: Fleetwide Riots!
+  m_EditorClassIdentifier: 
+  _id: 5000
+  _probability: 0.01
+  _body: There are massive riots across the entire fleet!
+  _options:
+  - _conditions: 
+    _text: Bloody communists!
+    _tooltip: 
+    _commands: add modifier all all -10 percentage current static movement 2 riots;
+    _closeAfterSelect: 1

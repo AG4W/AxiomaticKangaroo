@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_GeneratorAsset: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 51b3b15b605fa90499bfc1c84c1564f7, type: 3}
+  m_Name: Cruise Missile Launcher
+  m_EditorClassIdentifier: 
+  _description: 
+  _cooldown: 60
+  _modifiers: []
+  _minimumSize: 2
+  _icon: {fileID: 21300000, guid: e556687e5dedd14429550ab23be6754e, type: 3}
+  _autoActivateEnabledByDefault: 1
+  _speed: 12
+  _minDamage: 15
+  _maxDamage: 30
+  _shotVFX: {fileID: 1399558236890908, guid: eeaf3185d2001e443833bcb71836776d, type: 3}
+  _detonationVFX: {fileID: 5792241410408176019, guid: f70ced2b0c71c684faa3550c2faadd64,
+    type: 3}
+  _lifetime: 120

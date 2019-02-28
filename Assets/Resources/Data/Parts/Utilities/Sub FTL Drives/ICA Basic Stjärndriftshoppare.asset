@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f53d5d18df25fb844aa7af01b3774918, type: 3}
+  m_Name: "ICA Basic Stj\xE4rndriftshoppare"
+  m_EditorClassIdentifier: 
+  _description: 
+  _heatSignature: 200
+  _cooldown: 60
+  _modifiers: []
+  _minimumSize: 0
+  _icon: {fileID: 21300000, guid: 15fa2b6e91ee08d47b139adf0463c88b, type: 3}
+  _canBeActivated: 1
+  _jumpRange: 500
+  _jumpTime: 0.3
+  _chargeTime: 6
+  _chargeVFX: {fileID: 2377507270632637256, guid: 1848650b32c33d443abe96029e89fdab,
+    type: 3}
+  _travelVFX: {fileID: 3720082605414835654, guid: f6f2e2f1125ba124ea97bae36005e426,
+    type: 3}
+  _exitVFX: {fileID: 1698703844960604182, guid: d9587b9c0307fef4d8b64e75e65095ca,
+    type: 3}

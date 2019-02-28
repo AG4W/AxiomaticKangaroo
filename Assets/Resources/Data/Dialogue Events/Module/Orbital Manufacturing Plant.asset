@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb0794c25a004b041ba1a75c8cb4261f, type: 3}
+  m_Name: Orbital Manufacturing Plant
+  m_EditorClassIdentifier: 
+  _id: 2001
+  _probability: 1
+  _commands: 
+  _body: 'You have arrived at a neutral <color=yellow>orbital manufacturing plant</color>.
+
+
+    For a small fee, you can process FORMATVITAL_VELDSPAR into FORMATVITAL_AMMUNITION
+    or FORMATVITAL_TRITANITE into FORMATVITAL_CIVILIANSUPPLIES.'
+  _options:
+  - _conditions: evaluate vital veldspar 2;
+    _text: Process FORMATVITAL_VELDSPAR into FORMATVITAL_AMMUNITION.
+    _tooltip: '-2 FORMATVITAL_VELDSPAR
+
+      -5 credits
+
+
+      +1 FORMATVITAL_AMMUNITION'
+    _commands: 'modify vital ammunition +1;
+
+      modify vital veldspar -2;'
+    _closeAfterSelect: 0
+  - _conditions: evaluate vital tritanite 2;
+    _text: Process FORMATVITAL_TRITANITE into FORMATVITAL_CIVILIANSUPPLIES.
+    _tooltip: '-2 FORMATVITAL_TRITANITE
+
+      -5 credits;
+
+
+      +1 FORMATVITAL_CIVILIANSUPPLIES'
+    _commands: 'modify vital civiliansupplies +1;
+
+      modify vital tritanite -2;'
+    _closeAfterSelect: 0
+  - _conditions: 
+    _text: Leave.
+    _tooltip: Leave.
+    _commands: 
+    _closeAfterSelect: 1

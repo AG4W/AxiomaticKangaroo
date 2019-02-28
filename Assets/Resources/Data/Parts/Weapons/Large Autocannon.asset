@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_GeneratorAsset: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: ed51e008cb699424689b78baf84f2c58, type: 3}
+  m_Name: Large Autocannon
+  m_EditorClassIdentifier: 
+  _description: 
+  _cooldown: 0.75
+  _modifiers: []
+  _minimumSize: 2
+  _icon: {fileID: 21300000, guid: 018ad0f70df25fc4db497be72617dcdc, type: 3}
+  _autoActivateEnabledByDefault: 1
+  _speed: 60
+  _minDamage: 4
+  _maxDamage: 8
+  _shotVFX: {fileID: 1351580516973644, guid: 61edbf1f9812ca54fa1102e84d2cf240, type: 3}
+  _detonationVFX: {fileID: 4495794002714784216, guid: e520f0767c5a3464aa7b1a078a16a7ce,
+    type: 3}
+  _accuracy: 0.6
+  _range: 320
+  _fofWidth: 80

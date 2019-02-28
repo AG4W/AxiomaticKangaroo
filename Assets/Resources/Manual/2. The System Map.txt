@@ -1,0 +1,6 @@
+	
+[<color=yellow>WASD</color>] - Move the Camera Jig.
+[<color=yellow>NUMPAD+</color>], [<color=yellow>NUMPAD-</color>] - Camera Zoom.
+
+[<color=yellow>LEFT CLICK</color> ON POINT OF INTEREST] - Interact with point of interest.
+[<color=yellow>LEFT CLICK</color> ON MAP] - Move fleet to position.

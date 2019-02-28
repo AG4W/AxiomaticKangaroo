@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_GeneratorAsset: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 51b3b15b605fa90499bfc1c84c1564f7, type: 3}
+  m_Name: Small Missile Launcher
+  m_EditorClassIdentifier: 
+  _description: 
+  _cooldown: 60
+  _modifiers: []
+  _minimumSize: 0
+  _icon: {fileID: 21300000, guid: e556687e5dedd14429550ab23be6754e, type: 3}
+  _autoActivateEnabledByDefault: 1
+  _speed: 14
+  _minDamage: 5
+  _maxDamage: 10
+  _shotVFX: {fileID: 1399558236890908, guid: eeaf3185d2001e443833bcb71836776d, type: 3}
+  _detonationVFX: {fileID: 364386395249360021, guid: 50efeeecc78716641b3d9223c8b757e2,
+    type: 3}
+  _lifetime: 60

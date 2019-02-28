@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_GeneratorAsset: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: d8e5040e2987a6246b75d25976a54213, type: 3}
+  m_Name: Infinity Battleship 1
+  m_EditorClassIdentifier: 
+  _name: 
+  _hull: {fileID: 11400000, guid: 565abfb1f43d1a34eb6b1fd279acb6ec, type: 2}
+  _weapons:
+  - {fileID: 11400000, guid: 663e540d1e5bec1488b95e509898b87f, type: 2}
+  - {fileID: 11400000, guid: 663e540d1e5bec1488b95e509898b87f, type: 2}
+  - {fileID: 11400000, guid: 7ee18c4eb9c7b8c4ab0ce47a23c37de1, type: 2}
+  - {fileID: 11400000, guid: 7ee18c4eb9c7b8c4ab0ce47a23c37de1, type: 2}
+  _utilities:
+  - {fileID: 11400000, guid: e5ec9f2bd2663864ab52916761931074, type: 2}
+  - {fileID: 11400000, guid: e5ec9f2bd2663864ab52916761931074, type: 2}
+  - {fileID: 11400000, guid: 55ad55264dce8d6408b3582bfb247739, type: 2}
+  - {fileID: 11400000, guid: 57f56d478604ce24e8920305b410911b, type: 2}

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_GeneratorAsset: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 73808a65a54d577498120b8f6dae8a37, type: 3}
+  m_Name: Mining Laser
+  m_EditorClassIdentifier: 
+  _description: Extracts 0.5 units of the targeted resource during 30 seconds.
+  _heatSignature: 0
+  _cooldown: 45
+  _modifiers: []
+  _minimumSize: 0
+  _icon: {fileID: 21300000, guid: 7ee6eaa3098711945bf9a50d8de852da, type: 3}
+  _autoActivateEnabledByDefault: 1
+  _canBeActivated: 1
+  _range: 150
+  _duration: 30
+  _extractionAmount: 0.25
+  _vfxPrefab: {fileID: 7051558383957534052, guid: b2fc0e00270961542af438b10277feb1,
+    type: 3}

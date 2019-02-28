@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb0794c25a004b041ba1a75c8cb4261f, type: 3}
+  m_Name: Natural Wormhole
+  m_EditorClassIdentifier: 
+  _id: 1100
+  _probability: 1
+  _body: 'You have spent hours scanning, probing and even sending a manned shuttle
+    into the wormhole, but nothing appears to escape the event horizon.
+
+    The only remaining options appears to either enter the wormhole, or leave.
+
+
+    Heart in throat, your bridge crew awaits your orders in eerie silence.'
+  _options:
+  - _text: All ships ahead full! We are entering the event horizon!
+    _tooltip: Travel instantly across space and time, without spending any FORMATVITAL_PROCESSEDFUEL.
+    _commands: 'modify progress enteredwormhole true;
+
+      generatesystem;
+
+      load overworld;'
+  - _text: The risk is too much, we shall find another path.
+    _tooltip: Leave.
+    _commands: 

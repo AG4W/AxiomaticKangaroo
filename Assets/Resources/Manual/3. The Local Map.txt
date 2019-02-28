@@ -1,0 +1,12 @@
+	
+[<color=yellow>LEFT CLICK</color>] - Select/Target object.
+[<color=yellow>LEFT SHIFT</color>] + [<color=yellow>LEFT CLICK</color>] - Box Select.
+
+[<color=yellow>SCROLL WHEEL</color>] - Focus Camera Jig on clicked object.
+
+[<color=yellow>RIGHT CLICK</color>] - Create move order for selected objects to clicked point on the Alignment Plane.
+
+[<color=yellow>QEWASD</color>] - Move the Camera Jig.
+
+[<color=yellow>0 - 9</color>] - Select Group.
+[<color=yellow>CAPS</color>] + [<color=yellow>0 - 9</color>] - Create Group.

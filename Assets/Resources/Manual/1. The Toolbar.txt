@@ -1,0 +1,6 @@
+	
+The toolbar displays your fleet state at a glance.
+
+To the left you have buttons for <color=orange>Ship Management</color>, <color=orange>Fleet Policies</color>, <color=orange>Fleet Inventory</color> and <color=orange>Crew</color>.
+Following the buttons, the current status of the vitals of your fleets are displayed - with finished goods first, raw resources second and movement last.
+Hovering over these will bring up additional information.
