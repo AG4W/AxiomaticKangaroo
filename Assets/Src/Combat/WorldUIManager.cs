@@ -198,8 +198,8 @@ public class WorldUIManager : MonoBehaviour
                     delegate
                     {
                         components[a].OnTooltipEnter();
-                        TooltipManager.getInstance.OpenTooltip(components[a].name + "\n" + components[a].description, g.transform.position);
                         components[a].DrawVisualization();
+                        TooltipManager.getInstance.OpenTooltip(components[a].name + "\n" + components[a].description, g.transform.position);
                     },
                     //add useaction for tooltip
                     delegate
@@ -223,8 +223,8 @@ public class WorldUIManager : MonoBehaviour
                     delegate
                     {
                         components[a].OnTooltipExit();
-                        TooltipManager.getInstance.CloseTooltip();
                         Visualizer.getInstance.Hide();
+                        TooltipManager.getInstance.CloseTooltip();
                     });
 
             StartCoroutine(UpdateCooldownUI(components[i], g.transform.Find("cooldown").GetComponent<Image>()));

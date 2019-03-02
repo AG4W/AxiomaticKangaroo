@@ -87,6 +87,7 @@ public class Weapon : ShipComponent
         string s = base.GetSummary();
 
         s += "\n\n";
+        s += "Damage: <color=red>" + _minDamage + "</color> - <color=green>" + _maxDamage + "</color>\n\n"; 
         s += "Range: " + _range + "\n";
         s += "Speed: " + _speed;
 

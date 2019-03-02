@@ -140,7 +140,7 @@ public class SubFTLUtility : Utility
         string s = base.GetSummary();
 
         s += "\n\n";
-        s += "Range: " + _jumpRange;
+        s += "Range: " + _jumpRange + "\n";
         s += "Charge time: " + _chargeTime;
 
         return s;

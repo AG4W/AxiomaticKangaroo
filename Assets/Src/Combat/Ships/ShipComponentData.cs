@@ -166,7 +166,7 @@ public class ShipComponent
         switch (_rarity)
         {
             case ShipComponentRarity.Common:
-                return new Color(0f, 1f, 0f);
+                return new Color(1f, 1f, 1f);
             case ShipComponentRarity.Rare:
                 return new Color(0f, 0f, 1f);
             case ShipComponentRarity.Artifact:
