@@ -8,7 +8,8 @@ public class ShipComponentData : ScriptableObject
 
     [SerializeField]VitalModifier[] _modifiers;
 
-    [SerializeField]ShipComponentRarity _rarity;
+    [SerializeField]ShipComponentRarity _rarityBot = ShipComponentRarity.Common;
+    [SerializeField]ShipComponentRarity _rarityCap = ShipComponentRarity.Artifact;
     [SerializeField]HullClass _minimumSize = HullClass.Frigate;
     [SerializeField]Sprite _icon;
 
@@ -20,7 +21,8 @@ public class ShipComponentData : ScriptableObject
 
     public VitalModifier[] modifiers { get { return _modifiers; } }
 
-    public ShipComponentRarity rarity { get { return _rarity; } }
+    public ShipComponentRarity rarityBot { get { return _rarityBot; } }
+    public ShipComponentRarity rarityCap { get { return _rarityCap; } }
     public HullClass minimumSize { get { return _minimumSize; } }
     public Sprite icon { get { return _icon; } }
 
@@ -29,10 +31,6 @@ public class ShipComponentData : ScriptableObject
     public virtual ShipComponent Instantiate()
     {
         return new ShipComponent(this);
-    }
-    public virtual ShipComponent Instantiate(ShipComponentRarity rarity)
-    {
-        return new ShipComponent(this, rarity);
     }
 }
 public class ShipComponent
@@ -46,7 +44,7 @@ public class ShipComponent
     VitalModifier[] _modifiers;
 
     ShipComponentType _type;
-    ShipComponentRarity _rarity;
+    Rarity _rarity;
 
     HullClass _minimumSize;
     Sprite _icon;
@@ -67,7 +65,7 @@ public class ShipComponent
     public VitalModifier[] modifiers { get { return _modifiers; } }
 
     public ShipComponentType type { get { return _type; } protected set { _type = value; } }
-    public ShipComponentRarity rarity { get { return _rarity; } }
+    public Rarity rarity { get { return _rarity; } }
 
     public HullClass minimumSize { get { return _minimumSize; } }
     public Sprite icon { get { return _icon; } }
@@ -79,29 +77,15 @@ public class ShipComponent
 
     public ShipComponent(ShipComponentData scd)
     {
+        //fetch rarity first
+        _rarity = RarityDB.GetWeighted(scd.rarityBot, scd.rarityCap);
+
         _name = scd.name;
         _description = scd.description;
 
-        _cooldown = scd.cooldown;
-
+        _cooldown = (scd.cooldown / _rarity.modifier);
         _modifiers = scd.modifiers;
 
-        _rarity = scd.rarity;
-        _minimumSize = scd.minimumSize;
-        _icon = scd.icon;
-
-        _autoActivate = scd.autoActivateEnabledByDefault;
-    }
-    public ShipComponent(ShipComponentData scd, ShipComponentRarity rarity)
-    {
-        _name = scd.name;
-        _description = scd.description;
-
-        _cooldown = scd.cooldown;
-
-        _modifiers = scd.modifiers;
-
-        _rarity = rarity;
         _minimumSize = scd.minimumSize;
         _icon = scd.icon;
 
@@ -147,7 +131,9 @@ public class ShipComponent
     {
         string s = "";
 
-        s += "<color=#" + ColorUtility.ToHtmlStringRGB(ColorByRarity()) + ">(" + _rarity + " " + _type + ")</color>\n\n";
+        s += "<color=#" + ColorUtility.ToHtmlStringRGB(GetColor()) + ">" + _name + " (" + _rarity.rarity.ToString() + " " + _type + ")</color>\n";
+        s += "Required Ship Size: <color=yellow>" + _minimumSize.ToString() + "</color>\n\n";
+
         s += _description;
 
         return s;
@@ -159,24 +145,11 @@ public class ShipComponent
 
     public string Format()
     {
-        return "<color=#" + ColorUtility.ToHtmlStringRGB(ColorByRarity()) + ">" + _name + "</color>";
+        return "<color=#" + ColorUtility.ToHtmlStringRGB(GetColor()) + ">" + _name + "</color>";
     }
-    public Color ColorByRarity()
+    public Color GetColor()
     {
-        switch (_rarity)
-        {
-            case ShipComponentRarity.Common:
-                return new Color(1f, 1f, 1f);
-            case ShipComponentRarity.Rare:
-                return new Color(0f, 0f, 1f);
-            case ShipComponentRarity.Artifact:
-                return new Color(1f, 0f, 1f);
-            case ShipComponentRarity.Forerunner:
-                return new Color(1f, .5f, 0f);
-            default:
-                Debug.Log("Used invalid rarity!");
-                return UnityEngine.Color.cyan;
-        }
+        return _rarity.color;
     }
 }
 public enum ShipComponentType
@@ -187,7 +160,7 @@ public enum ShipComponentType
 public enum ShipComponentRarity
 {
     Common,
-    Rare,
+    Exotic,
+    Mastercraft,
     Artifact,
-    Forerunner,
 }

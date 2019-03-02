@@ -26,9 +26,9 @@ public class Shield : Utility
 
     public Shield(ShieldData sd) : base(sd)
     {
-        _amount = sd.amount;
-        _rate = sd.rate;
-        _duration = sd.duration;
+        _amount = (sd.amount * base.rarity.modifier);
+        _rate = (sd.rate / base.rarity.modifier);
+        _duration = (sd.duration * base.rarity.modifier);
     }
     protected override void OnActivation()
     {
@@ -54,8 +54,8 @@ public class Shield : Utility
         string s = base.GetSummary();
 
         s += "\n\n";
-        s += "Regeneration Amount: " + _amount + "\n";
-        s += "Regeneration Rate: " + _rate + "\n";
+        s += "Regeneration Amount: " + _amount.ToString("0.##") + "\n";
+        s += "Regeneration Rate: " + _rate.ToString("0.##") + "\n";
         s += "Duration: " + _duration;
 
         return s;

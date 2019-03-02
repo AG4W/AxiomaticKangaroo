@@ -150,14 +150,14 @@ public class ManagementUIManager : MonoBehaviour
 
             GameObject g = Instantiate(_listItem, _shipStats);
 
-            g.transform.Find("title").GetComponent<Text>().text = w == null ? "[Empty Slot]" : w.name;
-            g.transform.Find("body").GetComponent<Text>().text = w == null ? "" : "<color=red>" + w.minDamage + "</color> - <color=green>" + w.maxDamage + "</color>";
+            g.transform.Find("title").GetComponent<Text>().text = w == null ? "[Empty Slot]" : "<color=#" + ColorUtility.ToHtmlStringRGB(w.GetColor()) + ">" + w.name + "</color>";
+            g.transform.Find("body").GetComponent<Text>().text = w == null ? "" : "<color=red>" + w.minDamage.ToString("0.##") + "</color> - <color=green>" + w.maxDamage.ToString("0.##") + "</color>";
 
             if(w != null)
                 g.transform.Find("icon").GetComponent<Image>().sprite = w.icon;
 
             g.GetComponent<GenericTooltipHandler>().Initialize(
-                () => TooltipManager.getInstance.OpenTooltip(w == null ? "Left-click to equip a weapon in this slot." : w.name + "\n" + w.GetSummary(), Input.mousePosition),
+                () => TooltipManager.getInstance.OpenTooltip(w == null ? "Left-click to equip a weapon in this slot." : w.GetSummary(), Input.mousePosition),
                 () => OpenInventoryWindow(s, a, true, g.transform.position),
                 null,
                 delegate 
@@ -187,14 +187,14 @@ public class ManagementUIManager : MonoBehaviour
 
             GameObject g = Instantiate(_listItem, _shipStats);
 
-            g.transform.Find("title").GetComponent<Text>().text = u == null ? "[Empty Slot]" : s.utilities[i].name;
+            g.transform.Find("title").GetComponent<Text>().text = u == null ? "[Empty Slot]" : "<color=#" + ColorUtility.ToHtmlStringRGB(u.GetColor()) + ">" + u.name + "</color>";
             g.transform.Find("body").GetComponent<Text>().text = "";
 
             if(u != null)
                 g.transform.Find("icon").GetComponent<Image>().sprite = u.icon;
 
             g.GetComponent<GenericTooltipHandler>().Initialize(
-                () => TooltipManager.getInstance.OpenTooltip(u == null ? "Left-click to equip a utility in this slot." : s.utilities[a].name + "\n" + s.utilities[a].GetSummary(), Input.mousePosition),
+                () => TooltipManager.getInstance.OpenTooltip(u == null ? "Left-click to equip a utility in this slot." : u.GetSummary(), Input.mousePosition),
                 () => OpenInventoryWindow(s, a, false, g.transform.position),
                 null,
                 delegate
@@ -253,16 +253,12 @@ public class ManagementUIManager : MonoBehaviour
         ClearInventoryWindow();
         List<ShipComponent> components = new List<ShipComponent>();
 
-        if(isWeapon)
-            components = PlayerData.inventory
-                .Where(i => i is Weapon)
-                .OrderBy(i => i.name)
-                .ToList();
+        if (isWeapon)
+            components = PlayerData.inventory.Where(i => i is Weapon && i.minimumSize <= ship.size).ToList();
         else
-            components = PlayerData.inventory
-                .Where(i => i is Utility)
-                .OrderBy(i => i.name)
-                .ToList();
+            components = PlayerData.inventory.Where(i => i is Utility && i.minimumSize <= ship.size).ToList();
+
+        components = components.OrderBy(i => i.name).OrderByDescending(i => i.rarity.rarity).ToList();
 
         for (int i = 0; i < components.Count; i++)
         {
@@ -270,12 +266,12 @@ public class ManagementUIManager : MonoBehaviour
 
             GameObject g = Instantiate(_listItem, _inventoryList);
 
-            g.transform.Find("title").GetComponent<Text>().text = sc.name;
-            g.transform.Find("body").GetComponent<Text>().text = isWeapon ? "<color=red>" + (sc as Weapon).minDamage + "</color> - <color=green>" + (sc as Weapon).maxDamage + "</color>" : "";
+            g.transform.Find("title").GetComponent<Text>().text = "<color=#" + ColorUtility.ToHtmlStringRGB(sc.GetColor()) + ">" + sc.name + "</color>";
+            g.transform.Find("body").GetComponent<Text>().text = isWeapon ? "<color=red>" + (sc as Weapon).minDamage.ToString("0.##") + "</color> - <color=green>" + (sc as Weapon).maxDamage.ToString("0.##") + "</color>" : "";
             g.transform.Find("icon").GetComponent<Image>().sprite = sc.icon;
 
             g.GetComponent<GenericTooltipHandler>().Initialize(
-                () => TooltipManager.getInstance.OpenTooltip(sc.name + "\n" + sc.GetSummary(), Input.mousePosition),
+                () => TooltipManager.getInstance.OpenTooltip(sc.GetSummary(), Input.mousePosition),
                 delegate
                 {
                     ShipComponent old;

@@ -28,7 +28,7 @@ public class LootEntity : MonoBehaviour
         _loot = new ShipComponent[Random.Range(_minItemCount, _maxItemCount)];
 
         for (int i = 0; i < _loot.Length; i++)
-            _loot[i] = ItemDB.GetRandom(_topRarity);
+            _loot[i] = ItemDB.GetRandomCapRarity(_topRarity);
 
         WorldUIManager.getInstance.CreateContactItem("Loot", "Contains many items", this.transform.position);
     }

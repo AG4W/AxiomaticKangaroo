@@ -175,69 +175,82 @@ public class WorldUIManager : MonoBehaviour
         if (!root.activeSelf)
             return;
 
-        LayoutElement le = root.transform.GetComponent<LayoutElement>();
         Transform list = root.transform.Find("list");
 
         for (int i = 0; i < components.Length; i++)
         {
             int a = i;
+            ShipComponent sc = components[i];
 
             GameObject g = Instantiate(_abilityItem, list);
-
-            //set icon
-            if(components[i].icon != null)
-                g.transform.Find("icon").GetComponent<Image>().sprite = components[i].icon;
-
-            //set tooltip actions
             GameObject autoActivate = g.transform.Find("autoActivate").gameObject;
-            autoActivate.SetActive(components[i].autoActivate);
 
-            //set activate action
-            g.GetComponent<GenericTooltipHandler>()
-                .Initialize(
-                    delegate
-                    {
-                        components[a].OnTooltipEnter();
-                        components[a].DrawVisualization();
-                        TooltipManager.getInstance.OpenTooltip(components[a].name + "\n" + components[a].description, g.transform.position);
-                    },
-                    //add useaction for tooltip
-                    delegate
-                    {
-                        if (components[a] is Weapon)
+            Image icon = g.transform.Find("icon").GetComponent<Image>();
+            Image cooldown = g.transform.Find("cooldown").GetComponent<Image>();
+
+            if (sc != null)
+            {
+                //set icon
+                if (sc != null)
+                    icon.sprite = sc.icon;
+                else
+                {
+                    icon.sprite = null;
+                    icon.color = new Color(1f, 1f, 1f, 0f);
+                }
+
+                //set tooltip actions
+                autoActivate.SetActive(sc.autoActivate);
+
+                //set activate action
+                g.GetComponent<GenericTooltipHandler>()
+                    .Initialize(
+                        delegate
                         {
-                            Weapon w = components[a] as Weapon;
+                            sc.OnTooltipEnter();
+                            sc.DrawVisualization();
+                            TooltipManager.getInstance.OpenTooltip(sc.GetSummary(), g.transform.position);
+                        },
+                        //add useaction for tooltip
+                        delegate
+                        {
+                            if (sc is Weapon)
+                            {
+                                Weapon w = sc as Weapon;
 
-                            if (!w.hasCooldown)
-                                w.AttemptFire(null, ship);
-                        }
-                        else if (components[a] is Utility)
-                            ((Utility)components[a]).AttemptActivate();
-                    },
-                    delegate
-                    {
-                        components[a].ToggleAutoActivate();
-                        autoActivate.SetActive(components[a].autoActivate);
-                    },
-                    null,
-                    delegate
-                    {
-                        components[a].OnTooltipExit();
-                        Visualizer.getInstance.Hide();
-                        TooltipManager.getInstance.CloseTooltip();
-                    });
+                                if (!w.hasCooldown)
+                                    w.AttemptFire(null, ship);
+                            }
+                            else if (sc is Utility)
+                                ((Utility)sc).AttemptActivate();
+                        },
+                        delegate
+                        {
+                            sc.ToggleAutoActivate();
+                            autoActivate.SetActive(sc.autoActivate);
+                        },
+                        null,
+                        delegate
+                        {
+                            sc.OnTooltipExit();
+                            Visualizer.getInstance.Hide();
+                            TooltipManager.getInstance.CloseTooltip();
+                        });
 
-            StartCoroutine(UpdateCooldownUI(components[i], g.transform.Find("cooldown").GetComponent<Image>()));
+                cooldown.enabled = true;
+                StartCoroutine(UpdateCooldownUI(sc, cooldown));
+            }
+            else
+            {
+                icon.sprite = null;
+                icon.color = new Color(1f, 1f, 1f, 0f);
+
+                autoActivate.SetActive(false);
+                cooldown.enabled = false;
+
+                g.GetComponent<GenericTooltipHandler>().Initialize(null, null, null, null, null);
+            }
         }
-
-        float sizeX = 0f;
-
-        //spacing left/right
-        sizeX += 10f;
-        sizeX += 5f * (components.Length - 1);
-        sizeX += 40f * components.Length;
-
-        le.preferredWidth = sizeX;
     }
 
     void UpdateExitButton(bool safeToLeave)

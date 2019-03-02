@@ -32,10 +32,10 @@ public class ProjectileWeapon : Weapon
 
     public ProjectileWeapon(ProjectileWeaponData pwd) : base(pwd)
     {
-        base.range = pwd.range;
+        base.range = (pwd.range * base.rarity.modifier);
 
-        _accuracy = pwd.accuracy;
-        _fofWidth = pwd.fofWidth;
+        _accuracy = Mathf.Clamp((pwd.accuracy * base.rarity.modifier), 0f, 100f);
+        _fofWidth = Mathf.Clamp((pwd.fofWidth * base.rarity.modifier), 1f, 180f);
     }
 
     public override void AttemptFire(ShipEntity target, ShipEntity shooter)
@@ -115,7 +115,7 @@ public class ProjectileWeapon : Weapon
         string s = base.GetSummary();
         s += "\n\n";
 
-        s += "Fire Arc: " + _fofWidth + "°\n";
+        s += "Fire Arc: " + _fofWidth.ToString("0.##") + "°\n";
         s += "Accuracy: " + (_accuracy * 100f).ToString("0.##") + "%";
 
         return s;

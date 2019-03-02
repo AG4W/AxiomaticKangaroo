@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
 using Random = System.Random;
-using System;
 using System.Linq;
 
 public static class ItemDB
@@ -9,7 +8,7 @@ public static class ItemDB
     static bool _hasInitialized = false;
 
     static Random _random;
-    static ShipComponentData[][] _items;
+    static ShipComponentData[] _items;
 
     public static void Initialize()
     {
@@ -17,13 +16,7 @@ public static class ItemDB
             return;
 
         _random = new Random();
-        _items = new ShipComponentData[Enum.GetNames(typeof(ShipComponentRarity)).Length][];
-
-        for (int i = 0; i < _items.Length; i++)
-            _items[i] = Resources.LoadAll<ShipComponentData>("Data/Parts/")
-                .Where(scd => scd.rarity == (ShipComponentRarity)i)
-                .ToArray();
-
+        _items = Resources.LoadAll<ShipComponentData>("Data/Parts/");
         _hasInitialized = true;
     }
 
@@ -31,13 +24,14 @@ public static class ItemDB
     {
         return _items
             .RandomItem()
-            .RandomItem()
             .Instantiate();
     }
-    public static ShipComponent GetRandom(ShipComponentRarity topRarity)
+    public static ShipComponent GetRandomCapRarity(ShipComponentRarity rarity)
     {
-        return _items[_random.Next(0, (int)topRarity)]
+        return _items
+            .Where(i => i.rarityCap <= rarity)
+            .ToArray()
             .RandomItem()
-            .Instantiate((ShipComponentRarity)_random.Next(0, Enum.GetNames(typeof(ShipComponentRarity)).Length));
+            .Instantiate();
     }
 }

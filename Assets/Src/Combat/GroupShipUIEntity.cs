@@ -41,12 +41,16 @@ public class GroupShipUIEntity : MonoBehaviour
     }
     void OnDestroyed(ShipEntity s)
     {
+        _ship.OnSelected -= OnSelected;
+        _ship.OnDeselected -= OnDeselected;
         _ship.OnVitalChanged -= OnVitalChanged;
         _ship.OnDestroyed -= OnDestroyed;
     }
 
     public void OnRemoved()
     {
+        _ship.OnSelected -= OnSelected;
+        _ship.OnDeselected -= OnDeselected;
         _ship.OnVitalChanged -= OnVitalChanged;
         _ship.OnDestroyed -= OnDestroyed;
     }

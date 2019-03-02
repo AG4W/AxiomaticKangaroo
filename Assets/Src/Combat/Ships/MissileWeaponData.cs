@@ -20,7 +20,7 @@ public class MissileWeapon : Weapon
 
     public MissileWeapon(MissileWeaponData mwd) : base(mwd)
     {
-        _lifetime = mwd.lifetime;
+        _lifetime = (mwd.lifetime * base.rarity.modifier);
 
         base.range = _lifetime * base.speed;
     }
@@ -68,7 +68,7 @@ public class MissileWeapon : Weapon
         string s = base.GetSummary();
         s += "\n\n";
 
-        s += "Lifetime: " + _lifetime;
+        s += "Lifetime: " + _lifetime.ToString("0.##");
 
         return s;
     }

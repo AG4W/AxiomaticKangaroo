@@ -59,10 +59,10 @@ public class Weapon : ShipComponent
     {
         base.type = ShipComponentType.Weapon;
 
-        _speed = wd.speed;
+        _speed = (wd.speed * base.rarity.modifier);
 
-        _minDamage = wd.minDamage;
-        _maxDamage = wd.maxDamage;
+        _minDamage = (wd.minDamage * base.rarity.modifier);
+        _maxDamage = (wd.maxDamage * base.rarity.modifier);
 
         _shotVFX = wd.shotVFX;
         _detonationVFX = wd.detonationVFX;
@@ -87,9 +87,11 @@ public class Weapon : ShipComponent
         string s = base.GetSummary();
 
         s += "\n\n";
-        s += "Damage: <color=red>" + _minDamage + "</color> - <color=green>" + _maxDamage + "</color>\n\n"; 
-        s += "Range: " + _range + "\n";
-        s += "Speed: " + _speed;
+        s += "Damage: <color=red>" + _minDamage.ToString("0.##") + "</color> - <color=green>" + _maxDamage.ToString("0.##") + "</color>\n";
+        s += "Dps: <color=orange>" + dps.ToString("0.##") + "</color>\n\n";
+        s += "Range: " + _range.ToString("0.##") + "\n";
+        s += "Speed: " + _speed.ToString("0.##") + "\n";
+        s += "Cooldown: " + base.cooldown.ToString("0.##");
 
         return s;
     }

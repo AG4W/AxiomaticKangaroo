@@ -181,18 +181,19 @@ public class ShipEntity : MonoBehaviour
     {
         for (int i = 0; i < _availableTargets.Count; i++)
         {
-            if(_availableTargets[i])
+            if (!_availableTargets[i])
+                continue;
 
             for (int j = 0; j < _weapons.Length; j++)
             {
-                if(!_weapons[j].hasCooldown && _weapons[j].autoActivate)
+                if (_weapons[j] != null && !_weapons[j].hasCooldown && _weapons[j].autoActivate)
                     _weapons[j].AttemptFire(_availableTargets[i], this);
             }
         }
 
         for (int i = 0; i < _utilities.Length; i++)
         {
-            if (!_utilities[i].hasCooldown && _utilities[i].autoActivate)
+            if (_utilities[i] != null && !_utilities[i].hasCooldown && _utilities[i].autoActivate)
                 _utilities[i].AttemptActivate();
         }
     }
@@ -333,8 +334,13 @@ public class ShipEntity : MonoBehaviour
 
     void SetOptimalDistance()
     {
+        _optimalTargetDistance = 0f;
+
         for (int i = 0; i < _weapons.Length; i++)
         {
+            if (_weapons[i] == null)
+                continue;
+
             float range = _weapons[i].range;
 
             if (_optimalTargetDistance == 0 || range < _optimalTargetDistance)

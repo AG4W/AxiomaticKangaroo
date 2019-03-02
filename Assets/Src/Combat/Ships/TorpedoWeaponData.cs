@@ -26,8 +26,8 @@ public class TorpedoWeapon : Weapon
 
     public TorpedoWeapon(TorpedoWeaponData twd) : base(twd)
     {
-        _lifetime = twd.lifetime;
-        _detonationRange = twd.detonationRange;
+        _lifetime = (twd.lifetime * base.rarity.modifier);
+        _detonationRange = (twd.detonationRange * base.rarity.modifier);
 
         base.range = _lifetime * base.speed;
     }
@@ -100,10 +100,10 @@ public class TorpedoWeapon : Weapon
         string s = base.GetSummary();
         s += "\n\n";
 
-        s += "Lifetime: " + _lifetime;
+        s += "Lifetime: " + _lifetime.ToString("0.##");
         s += "\n";
 
-        s += "Detonation Radius: " + _detonationRange;
+        s += "Detonation Radius: " + _detonationRange.ToString("0.##");
 
         return s;
     }

@@ -53,7 +53,7 @@ public static class GameManager
 
     public static void IncrementSimulationSpeed()
     {
-        if (_simulationSpeed == SimulationSpeed.VeryFast)
+        if (_simulationSpeed == SimulationSpeed.Fastest)
             return;
 
         SetSimulationSpeed(_simulationSpeed + 1);
@@ -96,7 +96,7 @@ public static class GameManager
             case SimulationSpeed.Fast:
                 t = 2f;
                 break;
-            case SimulationSpeed.VeryFast:
+            case SimulationSpeed.Fastest:
                 t = 4f;
                 break;
             default:
@@ -107,7 +107,6 @@ public static class GameManager
         _simulationSpeed = speed;
 
         Time.timeScale = t;
-
         OnSimulationSpeedChanged?.Invoke(_simulationSpeed);
     }
 
@@ -246,11 +245,16 @@ public static class GameManager
                 ShipEntity target = ships[i].target == null ? player.RandomItem() : ships[i].target;
                 ships[i].UpdateTarget(target);
 
-                //update movepos
+                float d = Vector3.Distance(ships[i].transform.position, target.transform.position);
+
                 Vector3 heading = ships[i].transform.position - target.transform.position;
                 heading = heading.normalized;
 
-                ships[i].UpdateMovePosition(target.transform.position + (heading * ships[i].optimalTargetDistance));
+                if (d <= ships[i].optimalTargetDistance)
+                    ships[i].UpdateMovePosition((target.transform.position + (heading * ships[i].optimalTargetDistance)).Perpendicular(ships[i].transform.up));
+                else
+                    //update movepos
+                    ships[i].UpdateMovePosition(target.transform.position + (heading * ships[i].optimalTargetDistance));
             }
 
             yield return new WaitForSeconds(_aiTickRate);
@@ -258,19 +262,22 @@ public static class GameManager
     }
     static IEnumerator TurnTickAsync()
     {
-        bool hasSpawnedFirstIncursion = false;
         int turnsSinceLastIncursion = 0;
+        bool hasSpawnedFirstIncursion = false;
 
         while (true)
         {
+            turnsSinceLastIncursion++;
+            LogManager.getInstance.AddEntry("A day has passed.");
+
             if (!hasSpawnedFirstIncursion || turnsSinceLastIncursion > 0 && Random.Range(0f, 100f) <= (_incursionChance + turnsSinceLastIncursion) * DifficultyUtils.GetModifier(RuntimeData.save.data.difficulty))
             {
                 GenerateIncursion();
+
+                turnsSinceLastIncursion = 0;
                 hasSpawnedFirstIncursion = true;
             }
-
-            turnsSinceLastIncursion++;
-            LogManager.getInstance.AddEntry("A day has passed.");
+            
             yield return new WaitForSeconds(_turnTimeInMinutes * 60);
         }
     }
@@ -281,5 +288,5 @@ public enum SimulationSpeed
     Slow,
     Normal,
     Fast,
-    VeryFast
+    Fastest
 }

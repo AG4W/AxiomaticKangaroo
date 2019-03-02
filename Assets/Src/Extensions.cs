@@ -83,21 +83,20 @@ public static class Extensions
         return romanNumeral;
     }
 
-    public static ShipComponentRarity GetLootRarity(ShipComponentRarity rarity, float roll)
+    public static ShipComponentRarity GetLootRarity(ShipComponentRarity rarityCap, float roll)
     {
+        Debug.Assert(roll <= 1f && roll >= 0f, "Wrong roll values");
         ShipComponentRarity prospect = ShipComponentRarity.Common;
 
         if (roll <= .01f)
-            prospect = ShipComponentRarity.Forerunner;
-        else if (roll <= .1f)
             prospect = ShipComponentRarity.Artifact;
-        else if (roll <= .33f)
-            prospect = ShipComponentRarity.Rare;
+        else if (roll <= .15f)
+            prospect = ShipComponentRarity.Exotic;
         else
             prospect = ShipComponentRarity.Common;
 
-        if (prospect > rarity)
-            return rarity;
+        if (prospect >= rarityCap)
+            return rarityCap;
 
         return prospect;
     }

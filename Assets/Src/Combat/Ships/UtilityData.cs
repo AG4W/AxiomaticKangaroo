@@ -39,6 +39,9 @@ public class Utility : ShipComponent
         s += "\n\n";
         s += "Mode: " + (_canBeActivated ? "Active." : "Passive.");
 
+        if(_canBeActivated)
+            s += "\nCooldown: " + base.cooldown.ToString("0.##");
+
         return s;
     }
 }

@@ -63,7 +63,9 @@ public class MainMenuManager : MonoBehaviour
         //load misc stuff
         NameGenerator.Initialize();
         ModelDB.Initialize();
+        ItemDB.Initialize();
         EventDB.Initialize();
+        RarityDB.Initialize();
         PaletteDB.Initialize();
 
         //load saves first

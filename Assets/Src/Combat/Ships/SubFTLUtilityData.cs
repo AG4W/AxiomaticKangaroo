@@ -46,9 +46,9 @@ public class SubFTLUtility : Utility
 
     public SubFTLUtility(SubFTLUtilityData sftlud) : base(sftlud)
     {
-        _jumpRange = sftlud.jumpRange;
+        _jumpRange = (sftlud.jumpRange * base.rarity.modifier);
         _jumpTime = sftlud.jumpTime;
-        _chargeTime = sftlud.chargeTime;
+        _chargeTime = (sftlud.chargeTime / base.rarity.modifier);
 
         _chargeVFX = sftlud.chargeVFX;
         _travelVFX = sftlud.travelVFX;
@@ -140,8 +140,8 @@ public class SubFTLUtility : Utility
         string s = base.GetSummary();
 
         s += "\n\n";
-        s += "Range: " + _jumpRange + "\n";
-        s += "Charge time: " + _chargeTime;
+        s += "Range: " + _jumpRange.ToString("0") + "\n";
+        s += "Charge time: " + _chargeTime.ToString("0.##");
 
         return s;
     }
