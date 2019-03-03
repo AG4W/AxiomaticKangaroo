@@ -42,8 +42,7 @@ public class ShipVisualEntity : MonoBehaviour
             rb.mass = 1;
             rb.drag = .75f;
             rb.angularDrag = .75f;
-
-            rb.AddForce(new Vector3(Random.Range(-1, 1), Random.Range(-1, 1), Random.Range(-1, 1)) * 2f, ForceMode.Impulse);
+            rb.AddForce(new Vector3(Random.Range(-1, 1), Random.Range(-1, 1), Random.Range(-1, 1)) * Random.Range(5f, 10f), ForceMode.Impulse);
         }
 
         Destroy(Instantiate(_destructionVFX, this.transform.position, Random.rotation, null), 3f);

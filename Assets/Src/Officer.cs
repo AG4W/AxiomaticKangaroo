@@ -73,9 +73,18 @@ public class Officer
     {
         return
             _rank + " " + _name + "\n" +
-            "Current Assignment: " + (_assignment == null ? "<color=green>Available</color>" : "Commanding the '<i><color=yellow>" + _assignment.name + "</color></i>'") + "\n" +
-            "Level: " + _level + "\n" + 
-            "Homeplanet: " + _homeplanet + "\n";
+            "Level: " + _level + "\n" +
+            "Assignment: " + (_assignment == null ? "<color=green>Available</color>" : "<color=yellow>" + _assignment.name + "</color>");
+    }
+    public string GetSummary()
+    {
+        string s = "";
+
+        s += _rank + " " + _name + "\n\n";
+        s += "Level: " + _level + "\n";
+        s += "Assignment: " + (_assignment == null ? "<color=green>Available</color>" : "<color=yellow>" + _assignment.name + "</color>\n");
+
+        return s;
     }
 }
 public enum Rank
@@ -84,7 +93,7 @@ public enum Rank
     Midshipsman,
     Lieutenant,
     Commodore,
-    Captain
+    Captain,
 }
 public enum Gender
 {

@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
+
+using System.Collections.Generic;
+using System.Linq;
 
 public class ManagementUIManager : MonoBehaviour
 {
@@ -34,6 +35,12 @@ public class ManagementUIManager : MonoBehaviour
     [Header("Inventory Window")]
     [SerializeField]GameObject _inventoryWindow;
     [SerializeField]Transform _inventoryList;
+
+    [Header("Crew Window")]
+    [SerializeField]GameObject _officerItem;
+    [SerializeField]GameObject _noOfficerAvailableItem;
+    [SerializeField]GameObject _crewWindow;
+    [SerializeField]Transform _crewList;
 
     public bool isOpen { get { return _managementWindow.activeSelf; } }
 
@@ -104,7 +111,7 @@ public class ManagementUIManager : MonoBehaviour
         _officer.transform.Find("portrait").GetComponent<Image>().sprite = s.officer == null ? ModelDB.defaultPortrait : s.officer.portrait;
         _officer.GetComponent<GenericTooltipHandler>().Initialize(
             () => TooltipManager.getInstance.OpenTooltip(s.officer == null ? "Assign." : "Replace.", Input.mousePosition),
-            null,
+            () => OpenCrewWindow(s, _officer.transform.position),
             null,
             null,
             () => TooltipManager.getInstance.CloseTooltip());
@@ -248,15 +255,15 @@ public class ManagementUIManager : MonoBehaviour
             () => TooltipManager.getInstance.CloseTooltip());
     }
 
-    void OpenInventoryWindow(Ship ship, int index, bool isWeapon, Vector3 position)
+    void OpenInventoryWindow(Ship s, int index, bool isWeapon, Vector3 position)
     {
         ClearInventoryWindow();
         List<ShipComponent> components = new List<ShipComponent>();
 
         if (isWeapon)
-            components = PlayerData.inventory.Where(i => i is Weapon && i.minimumSize <= ship.size).ToList();
+            components = PlayerData.inventory.Where(i => i is Weapon && i.minimumSize <= s.size).ToList();
         else
-            components = PlayerData.inventory.Where(i => i is Utility && i.minimumSize <= ship.size).ToList();
+            components = PlayerData.inventory.Where(i => i is Utility && i.minimumSize <= s.size).ToList();
 
         components = components.OrderBy(i => i.name).OrderByDescending(i => i.rarity.rarity).ToList();
 
@@ -278,16 +285,16 @@ public class ManagementUIManager : MonoBehaviour
 
                     if (isWeapon)
                     {
-                        old = ship.weapons[index];
-                        ship.weapons[index] = sc as Weapon;
+                        old = s.weapons[index];
+                        s.weapons[index] = sc as Weapon;
                     }
                     else
                     {
-                        old = ship.utilities[index];
-                        ship.utilities[index] = sc as Utility;
+                        old = s.utilities[index];
+                        s.utilities[index] = sc as Utility;
                     }
 
-                    UpdateShipListAndOpenSelectedWindow(ship);
+                    UpdateShipListAndOpenSelectedWindow(s);
                     CloseInventoryWindow();
                     PlayerData.inventory.Remove(sc);
 
@@ -313,6 +320,52 @@ public class ManagementUIManager : MonoBehaviour
         _inventoryWindow.SetActive(false);
     }
 
+    void OpenCrewWindow(Ship s, Vector3 position)
+    {
+        ClearCrewWindow();
+
+        if(PlayerData.officers.Count == 0)
+            Instantiate(_noOfficerAvailableItem, _crewList);
+        else
+        {
+            for (int i = 0; i < PlayerData.officers.Count; i++)
+            {
+                Officer o = PlayerData.officers[i];
+                GameObject g = Instantiate(_officerItem, _crewList);
+
+                g.transform.Find("portrait").GetComponent<Image>().sprite = o.portrait;
+                g.transform.Find("text").GetComponent<Text>().text = o.ToString();
+                g.GetComponent<GenericTooltipHandler>().Initialize(
+                    null,
+                    delegate
+                    {
+                        //unassign old officer
+                        if (s.officer != null)
+                            s.officer.Assign(null);
+
+                        //unassign new officer from old assignment
+                        if(o.assignment != null)
+                            o.assignment.AssignOfficer(null);
+
+                        s.AssignOfficer(o);
+                        UpdateShipListAndOpenSelectedWindow(s);
+                        CloseCrewWindow();
+                    },
+                    null,
+                    null,
+                    null);
+            }
+        }
+
+        _crewWindow.GetComponent<GenericTooltipHandler>().Initialize(null, null, null, null, () => CloseCrewWindow());
+        _crewWindow.transform.position = position;
+        _crewWindow.SetActive(true);
+    }
+    void CloseCrewWindow()
+    {
+        _crewWindow.SetActive(false);
+    }
+
     void Clear()
     {
         for (int i = 0; i < _shipList.childCount; i++)
@@ -331,5 +384,10 @@ public class ManagementUIManager : MonoBehaviour
     {
         for (int i = 0; i < _inventoryList.childCount; i++)
             Destroy(_inventoryList.GetChild(i).gameObject);
+    }
+    void ClearCrewWindow()
+    {
+        for (int i = 0; i < _crewList.childCount; i++)
+            Destroy(_crewList.GetChild(i).gameObject);
     }
 }
