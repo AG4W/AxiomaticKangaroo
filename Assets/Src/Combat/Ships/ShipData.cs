@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
 using System.Linq;
-using System.Collections.Generic;
 
 [CreateAssetMenu(menuName = "Data/Premade Ship")]
 public class ShipData : ScriptableObject
@@ -22,15 +21,11 @@ public class ShipData : ScriptableObject
 public class Ship
 {
     string _name;
-
     float[] _vitals;
 
     Weapon[] _weapons;
     Utility[] _utilities;
     ShipComponent[] _components;
-    ResourceScanner _scanner;
-
-    List<FleetVitalModifier> _modifiers = new List<FleetVitalModifier>();
 
     //components
     Hull _hull;
@@ -38,32 +33,23 @@ public class Ship
 
     //captain
     Officer _officer;
-    ShipAllegiance _allegiance;
 
     //misc
     GameObject _model;
     GameObject _destroyedVFX;
-
-    ShipLog _log = new ShipLog();
 
     public string name { get { return _name; } }
 
     public Weapon[] weapons { get { return _weapons; } }
     public Utility[] utilities { get { return _utilities; } }
     public ShipComponent[] components { get { return _components; } }
-    public ResourceScanner scanner { get { return _scanner; } }
-
-    public List<FleetVitalModifier> modifiers { get { return _modifiers; } }
 
     public HullClass size { get { return _size; } }
 
     public Officer officer { get { return _officer; } }
-    public ShipAllegiance allegiance { get { return _allegiance; } }
 
     public GameObject model { get { return _model; } }
     public GameObject destroyedVFX { get { return _destroyedVFX; } }
-
-    public ShipLog log { get { return _log; } }
 
     public Ship(ShipData sd)
     {
@@ -74,8 +60,6 @@ public class Ship
         _weapons = new Weapon[_hull.weaponSlots];
         _utilities = new Utility[_hull.utilitySlots];
         _components = new ShipComponent[_hull.weaponSlots + _hull.utilitySlots];
-
-        _modifiers.AddRange(_hull.maintenanceCosts);
 
         _model = _hull.model;
         _destroyedVFX = _hull.destroyedVFX;
@@ -117,7 +101,6 @@ public class Ship
         }
 
         UpdateStats();
-        UpdateResourceScanner();
     }
 
     void UpdateStats()
@@ -168,6 +151,27 @@ public class Ship
                 if(_components[i].modifiers[j].mode == ModifierMode.Percentage)
                     _vitals[(int)_components[i].modifiers[j].type] *= _components[i].modifiers[j].value;
         }
+
+        if(_officer != null)
+        {
+            //additive
+            for (int i = 0; i < _officer.traits.Count; i++)
+            {
+                for (int j = 0; j < _officer.traits[i].modifiers.Length; j++)
+                {
+                    if (_officer.traits[i].modifiers[j].mode == ModifierMode.Additive)
+                        _vitals[(int)_officer.traits[i].modifiers[j].type] += _officer.traits[i].modifiers[j].value;
+                }
+            }
+            //percentage
+            for (int i = 0; i < _officer.traits.Count; i++)
+            {
+                for (int j = 0; j < _officer.traits[i].modifiers.Length; j++)
+                    if (_officer.traits[i].modifiers[j].mode == ModifierMode.Percentage)
+                        _vitals[(int)_officer.traits[i].modifiers[j].type] *= _officer.traits[i].modifiers[j].value;
+            }
+        }
+
         //sanity checking, this needs expanding
         for (int i = 0; i < _vitals.Length; i++)
         {
@@ -176,21 +180,6 @@ public class Ship
         }
 
         OnStatsUpdated?.Invoke();
-    }
-    void UpdateResourceScanner()
-    {
-        _scanner = null;
-
-        for (int i = 0; i < _utilities.Length; i++)
-        {
-            if (_utilities[i] is ResourceScanner)
-            {
-                ResourceScanner scanner = (ResourceScanner)_utilities[i];
-
-                if (_scanner == null || scanner.range > _scanner.range)
-                    _scanner = scanner;
-            }
-        }
     }
 
     public ShipEntity Instantiate(Vector3 position, Quaternion rotation, int teamID, bool isDiscovered)
@@ -202,23 +191,9 @@ public class Ship
         return entity;
     }
 
-    public void SetName(string newName)
+    public void SetName(string n)
     {
-        _name = newName;
-    }
-    public void AddModifier(FleetVitalModifier fvm)
-    {
-        _modifiers.Add(fvm);
-
-        LogManager.getInstance.AddEntry("<i><color=yellow>" + _name + "</color></i> has gained a modifier: [" + fvm.value + " " + FleetVital.Format(fvm.type) + " due to " + fvm.reason + " for " + fvm.duration + (fvm.isInfinite ? "∞" : " days") + ".]");
-        OnModifierAdded?.Invoke(fvm);
-    }
-    public void RemoveModifier(FleetVitalModifier fvm)
-    {
-        _modifiers.Remove(fvm);
-
-        LogManager.getInstance.AddEntry("<i><color=yellow>" + _name + "</color></i> has lost a modifier: [" + fvm.value + " " + FleetVital.Format(fvm.type) + " due to " + fvm.reason + ".]");
-        OnModifierRemoved?.Invoke(fvm);
+        _name = n;
     }
     public void AssignOfficer(Officer o)
     {
@@ -226,27 +201,10 @@ public class Ship
 
         if (o != null)
             o.Assign(this);
+
+        UpdateStats();
     }
 
-    public void TickModifiers()
-    {
-        for (int i = 0; i < _modifiers.Count; i++)
-        {
-            if (!_modifiers[i].isInfinite)
-            {
-                _modifiers[i].Tick();
-
-                if (_modifiers[i].isComplete)
-                    RemoveModifier(_modifiers[i]);
-            }
-        }
-    }
-    public void TickConverters()
-    {
-        for (int i = 0; i < _utilities.Length; i++)
-            if(_utilities[i] is ResourceConversionUtility)
-                ((ResourceConversionUtility)_utilities[i]).Tick();
-    }
     public float GetVital(VitalType vt)
     {
         return _vitals[(int)vt];
@@ -260,77 +218,11 @@ public class Ship
     {
         return _hull.description;
     }
-    public string ListModifiers(FleetVitalType type)
-    {
-        string s = "";
 
-        s += "[<i><color=yellow>" + _name + "</color></i>]:\n";
-
-        for (int i = 0; i < _modifiers.Count; i++)
-        {
-            float v = _modifiers[i].value;
-
-            if(_modifiers[i].type == type)
-                s += "<color=" + (v == 0 ? "yellow" : v > 0 ? "green" : "red") + ">" + v.ToString("0.##") + "</color>" + (_modifiers[i].setting == ModifierSetting.Repeating ? " daily" : "") + ", due to: " + _modifiers[i].reason + ", " + (_modifiers[i].isInfinite ? "∞\n" : _modifiers[i].duration + " days.\n");
-        }
-        for (int i = 0; i < _utilities.Length; i++)
-        {
-            if(_utilities[i] is ResourceConversionUtility)
-            {
-                ResourceConversionUtility rcu = ((ResourceConversionUtility)_utilities[i]);
-
-                for (int j = 0; j < rcu.conversions.Length; j++)
-                {
-                    if(rcu.conversions[j].start == type)
-                        s += "<color=red>-" + rcu.conversions[j].maxConversionPerTurn.ToString("0.##") + "</color> daily (if possible), due to: [<color=yellow>" + rcu.name + "</color>].\n";
-                    else if(rcu.conversions[j].end == type)
-                        s += "<color=green>+" + (rcu.conversions[j].maxConversionPerTurn * rcu.conversions[j].rate).ToString("0.##") + "</color> daily (if possible), due to: [<color=yellow>" + rcu.name + "</color>].\n";
-                }
-            }
-        }
-
-        return s;
-    }
-
-    public delegate void StatsChangedEvent();
-    public StatsChangedEvent OnStatsUpdated;
+    public delegate void StatEvent();
+    public StatEvent OnStatsUpdated;
 
     public delegate void ModifierEvent(FleetVitalModifier fvm);
     public ModifierEvent OnModifierAdded;
     public ModifierEvent OnModifierRemoved;
-}
-public class ShipLog
-{
-    int _kills = 0;
-    List<ShipLogEntry> _entries = new List<ShipLogEntry>();
-
-    public int kills { get { return _kills; } }
-    public List<ShipLogEntry> entries { get { return _entries; } }
-
-    public void AddKill()
-    {
-        _kills++;
-    }
-    public void AddEntry(string title, string date, string body)
-    {
-        _entries.Add(new ShipLogEntry(title, date, body));
-    }
-}
-public struct ShipLogEntry
-{
-    public readonly string title;
-    public readonly string date;
-    public readonly string body;
-
-    public ShipLogEntry(string title, string date, string body)
-    {
-        this.title = title;
-        this.date = date;
-        this.body = body;
-    }
-}
-public enum ShipAllegiance
-{
-    Military,
-    Civilian
 }

@@ -17,7 +17,7 @@ public class ShipEntity : MonoBehaviour
     ShipEntity[] _scanCandidates;
 
     #region Data
-    Vital[] _vitals;
+    ShipVital[] _vitals;
 
     float _scanTimer = 0f;
     float _optimalTargetDistance;
@@ -61,10 +61,10 @@ public class ShipEntity : MonoBehaviour
         _teamID = teamID;
         _isDiscovered = isDiscovered;
 
-        _vitals = new Vital[System.Enum.GetValues(typeof(VitalType)).Length];
+        _vitals = new ShipVital[System.Enum.GetValues(typeof(VitalType)).Length];
 
         for (int i = 0; i < _vitals.Length; i++)
-            _vitals[i] = new Vital(ship.GetVital((VitalType)i), (VitalType)i);
+            _vitals[i] = new ShipVital(ship.GetVital((VitalType)i), (VitalType)i);
 
         //setup events
         for (int i = 0; i < _vitals.Length; i++)
@@ -140,22 +140,6 @@ public class ShipEntity : MonoBehaviour
                         LogManager.getInstance.AddEntry("[" + this.name + "]: Hostile contact! Distance: " + d.ToString("#") + " units.", 15f, EntryType.Combat);
 
                     _scanCandidates[i].SetDiscoveredStatus(true);
-                }
-            }
-            //scan for resources
-            for (int i = 0; i < GameManager.resources.Count; i++)
-            {
-                if (GameManager.resources[i] == null || GameManager.resources[i].isDiscovered && GameManager.resources[i].isScanned)
-                    continue;
-
-                float d = Vector3.Distance(this.transform.position, GameManager.resources[i].transform.position);
-
-                if (d <= (ship.scanner == null ? 1000 : ship.scanner.range))
-                {
-                    GameManager.resources[i].Discover();
-
-                    if (ship.scanner != null)
-                        GameManager.resources[i].Scan();
                 }
             }
         }
@@ -286,8 +270,8 @@ public class ShipEntity : MonoBehaviour
 
     public void ApplyDamage(float amount)
     {
-        Vital shield = GetVital(VitalType.ShieldPoints);
-        Vital hull = GetVital(VitalType.HullPoints);
+        ShipVital shield = GetVital(VitalType.ShieldPoints);
+        ShipVital hull = GetVital(VitalType.HullPoints);
 
         if (hull.current <= 0f)
             return;
@@ -304,8 +288,8 @@ public class ShipEntity : MonoBehaviour
         else
             hull.Update(-amount);
 
-        OnVitalChanged?.Invoke(VitalType.ShieldPoints, shield.inPercent);
-        OnVitalChanged?.Invoke(VitalType.HullPoints, hull.inPercent);
+        OnVitalChanged?.Invoke(shield);
+        OnVitalChanged?.Invoke(hull);
     }
     public void SetDiscoveredStatus(bool status)
     {
@@ -314,16 +298,16 @@ public class ShipEntity : MonoBehaviour
         OnDiscovered?.Invoke(status);
     }
 
-    public Vital GetVital(VitalType vt)
+    public ShipVital GetVital(VitalType vt)
     {
         return _vitals[(int)vt];
     }
-    void OnVitalChange(VitalType v, float current)
+    void OnVitalChange(Vital v)
     {
-        OnVitalChanged?.Invoke(v, current);
+        OnVitalChanged?.Invoke(v);
 
         //hook in audio here
-        if(v == VitalType.HullPoints && current <= 0f)
+        if((v as ShipVital).type == VitalType.HullPoints && v.current <= 0f)
             OnShipDestroyed();
     }
     void OnShipDestroyed()
@@ -348,8 +332,7 @@ public class ShipEntity : MonoBehaviour
         }
     }
 
-    public delegate void VitalChangedEvent(VitalType v, float current);
-    public event VitalChangedEvent OnVitalChanged;
+    public event Vital.VitalEvent OnVitalChanged;
 
     public delegate void TargetChangedEvent(ShipEntity t);
     public event TargetChangedEvent OnTargetChanged;

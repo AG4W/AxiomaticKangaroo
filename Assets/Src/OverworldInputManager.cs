@@ -65,7 +65,7 @@ public class OverworldInputManager : MonoBehaviour
 
     void ProcessPoILeftClick(PointOfInterest poi)
     {
-        if (PlayerData.fleet.GetVital(FleetVitalType.Movement).current >= Vector3.Distance(PlayerData.fleet.location, poi.location))
+        if (PlayerData.fleet.GetVital(FleetVitalType.Range).current >= Vector3.Distance(PlayerData.fleet.location, poi.location))
         {
             if (poi.type == PointOfInterestType.Fleet)
                 ((Fleet)poi).Intercept(PlayerData.fleet);

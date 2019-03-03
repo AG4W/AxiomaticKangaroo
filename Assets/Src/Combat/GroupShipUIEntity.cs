@@ -32,12 +32,14 @@ public class GroupShipUIEntity : MonoBehaviour
         _highlight.enabled = false;
     }
 
-    void OnVitalChanged(VitalType v, float current)
+    void OnVitalChanged(Vital v)
     {
-        if (v == VitalType.ShieldPoints)
-            _shield.fillAmount = _ship.GetVital(v).inPercent;
-        else if (v == VitalType.HullPoints)
-            _hull.fillAmount = _ship.GetVital(v).inPercent;
+        ShipVital sv = v as ShipVital;
+
+        if (sv.type == VitalType.ShieldPoints)
+            _shield.fillAmount = sv.inPercent;
+        else if (sv.type == VitalType.HullPoints)
+            _hull.fillAmount = sv.inPercent;
     }
     void OnDestroyed(ShipEntity s)
     {

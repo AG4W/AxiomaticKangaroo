@@ -98,12 +98,14 @@ public class ShipUIEntity : MonoBehaviour
         }
     }
 
-    void OnVitalChanged(VitalType vt, float currentInPercent)
+    void OnVitalChanged(Vital v)
     {
-        if (vt == VitalType.HullPoints)
-            _hull.fillAmount = currentInPercent;
-        else if (vt == VitalType.ShieldPoints)
-            _shield.fillAmount = currentInPercent;
+        ShipVital sv = v as ShipVital;
+
+        if (sv.type == VitalType.HullPoints)
+            _hull.fillAmount = sv.inPercent;
+        else if (sv.type == VitalType.ShieldPoints)
+            _shield.fillAmount = sv.inPercent;
     }
     void OnMovesUpdated(List<Move> moves, Move current)
     {

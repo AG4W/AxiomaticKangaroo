@@ -6,12 +6,12 @@ Management of these resources will be critical to your success.
 
 - FORMATVITAL_NEBULAGAS is the primary ingredient required to create efficient starship fuel, it can be processed into FORMATVITAL_PROCESSEDFUEL.
 - FORMATVITAL_VELDSPAR is the most common mineral in the galaxy, it is primarily used to manufacture FORMATVITAL_AMMUNITION.
-- FORMATVITAL_TRITANITE is one of the most multi-faceted minerals known, it has widespread uses required in the production of various FORMATVITAL_CIVILIANSUPPLIES.
+- FORMATVITAL_TRITANITE is one of the most multi-faceted minerals known, it has widespread uses required in the production of various FORMATVITAL_CIVILIANGOODS.
 
 [<color=green>Processed Goods</color>]:
 
 - FORMATVITAL_PROCESSEDFUEL is required for your fleets ability to travel in the System Map.
 - FORMATVITAL_AMMUNITION is needed for your fleets offensive and defensive capabilities in combat.
-- FORMATVITAL_CIVILIANSUPPLIES represents the goods required by the crews and populations of your fleet, examples are coffee, tobacco, food, entertainment.
+- FORMATVITAL_CIVILIANGOODS represents the goods required by the crews and populations of your fleet, examples are coffee, tobacco, food, entertainment.
 
 [<color=red>Raw Resources</color>] can be processed into [<color=green>Processed Goods</color>] using a <color=yellow>Orbital Structure</color> in the system map or by utilizing a <color=orange>Resource Conversion Utility</color> equipped on one of your ships.

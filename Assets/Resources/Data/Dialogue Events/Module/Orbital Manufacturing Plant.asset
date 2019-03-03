@@ -9,17 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  m_GeneratorAsset: {fileID: 0}
   m_Script: {fileID: 11500000, guid: fb0794c25a004b041ba1a75c8cb4261f, type: 3}
   m_Name: Orbital Manufacturing Plant
   m_EditorClassIdentifier: 
   _id: 2001
   _probability: 1
-  _commands: 
   _body: 'You have arrived at a neutral <color=yellow>orbital manufacturing plant</color>.
 
 
     For a small fee, you can process FORMATVITAL_VELDSPAR into FORMATVITAL_AMMUNITION
-    or FORMATVITAL_TRITANITE into FORMATVITAL_CIVILIANSUPPLIES.'
+    or FORMATVITAL_TRITANITE into FORMATVITAL_CIVILIANGOODS.'
   _options:
   - _conditions: evaluate vital veldspar 2;
     _text: Process FORMATVITAL_VELDSPAR into FORMATVITAL_AMMUNITION.
@@ -34,14 +34,14 @@ MonoBehaviour:
       modify vital veldspar -2;'
     _closeAfterSelect: 0
   - _conditions: evaluate vital tritanite 2;
-    _text: Process FORMATVITAL_TRITANITE into FORMATVITAL_CIVILIANSUPPLIES.
+    _text: Process FORMATVITAL_TRITANITE into FORMATVITAL_CIVILIANGOODS.
     _tooltip: '-2 FORMATVITAL_TRITANITE
 
       -5 credits;
 
 
-      +1 FORMATVITAL_CIVILIANSUPPLIES'
-    _commands: 'modify vital civiliansupplies +1;
+      +1 FORMATVITAL_CIVILIANGOODS'
+    _commands: 'modify vital civiliangoods +1;
 
       modify vital tritanite -2;'
     _closeAfterSelect: 0

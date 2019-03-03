@@ -29,12 +29,12 @@ MonoBehaviour:
 
       +25 FORMATVITAL_AMMUNITION
 
-      +25 FORMATVITAL_CIVILIANSUPPLIES'
+      +25 FORMATVITAL_CIVILIANGOODS'
     _commands: 'modify vital processedfuel 15;
 
       modify vital ammunition 25;
 
-      modify vital civiliansupplies 25;
+      modify vital civiliangoods 25;
 
       modify progress receivedstartevent true;'
     _closeAfterSelect: 1

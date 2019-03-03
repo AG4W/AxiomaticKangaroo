@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 using System;
+using System.Collections.Generic;
 
 public class Officer
 {
@@ -8,6 +9,8 @@ public class Officer
     string _homeplanet;
 
     int _level;
+
+    List<Trait> _traits;
 
     Sprite _portrait;
     Rank _rank;
@@ -19,6 +22,8 @@ public class Officer
     public string homeplanet { get { return _homeplanet; } }
 
     public int level { get { return _level; } }
+
+    public List<Trait> traits { get { return _traits; } }
 
     public Sprite portrait { get { return _portrait; } }
     public Rank rank { get { return _rank; } }
@@ -34,6 +39,8 @@ public class Officer
         _homeplanet = NameGenerator.GetPOIName(PointOfInterestType.Planet);
 
         _portrait = ModelDB.GetPortrait();
+        _traits = new List<Trait>();
+        _traits.Add(TraitDB.GetRandom());
     }
     public Officer(string name, string homeplanet, Sprite portrait, Rank rank, Gender gender)
     {
@@ -43,6 +50,7 @@ public class Officer
         _portrait = portrait;
         _rank = rank;
         _gender = gender;
+        _traits = new List<Trait>();
     }
 
     public void Assign(Ship ship)
@@ -69,6 +77,25 @@ public class Officer
         }
     }
 
+    public void AddTrait(Trait t)
+    {
+        _traits.Add(t);
+
+        if (LogManager.getInstance != null)
+            LogManager.getInstance.AddEntry(_rank.ToString() + " " + _name + " has gained a trait: " + t.title + ".");
+
+        OnTraitAdded?.Invoke(t);
+    }
+    public void RemoveTrait(Trait t)
+    {
+        _traits.Remove(t);
+
+        if (LogManager.getInstance != null)
+            LogManager.getInstance.AddEntry(_rank.ToString() + " " + _name + " has lost a trait: " + t.title + ".");
+
+        OnTraitRemoved?.Invoke(t);
+    }
+
     public override string ToString()
     {
         return
@@ -84,8 +111,15 @@ public class Officer
         s += "Level: " + _level + "\n";
         s += "Assignment: " + (_assignment == null ? "<color=green>Available</color>" : "<color=yellow>" + _assignment.name + "</color>\n");
 
+        for (int i = 0; i < _traits.Count; i++)
+            s += _traits[i].ToString() + "\n";
+
         return s;
     }
+
+    public delegate void TraitEvent(Trait t);
+    public static event TraitEvent OnTraitAdded;
+    public static event TraitEvent OnTraitRemoved;
 }
 public enum Rank
 {

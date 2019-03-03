@@ -108,7 +108,7 @@ public class PointOfInterest
         if (this == PlayerData.fleet)
             return "";
 
-        float daysAway = Vector3.Distance(_location, PlayerData.fleet.location) / PlayerData.fleet.GetVital(FleetVitalType.Movement).current;
+        float daysAway = Vector3.Distance(_location, PlayerData.fleet.location) / PlayerData.fleet.GetVital(FleetVitalType.Range).current;
         return (daysAway > 1 ? (daysAway.ToString("0.##") + " days away.") : "In range.");
     }
 

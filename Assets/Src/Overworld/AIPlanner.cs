@@ -51,7 +51,7 @@ public class AIPlanner
 
         if (_knowsAboutPlayer)
         {
-            if (d <= fleet.GetVital(FleetVitalType.Movement).current)
+            if (d <= fleet.GetVital(FleetVitalType.Range).current)
             {
                 PlayerData.fleet.Intercept(fleet);
                 return;
@@ -63,7 +63,7 @@ public class AIPlanner
         {
             Vector3 p = RuntimeData.system.GetRandomLocation();
 
-            while (Vector3.Distance(p, fleet.location) <= fleet.GetVital(FleetVitalType.Movement).current)
+            while (Vector3.Distance(p, fleet.location) <= fleet.GetVital(FleetVitalType.Range).current)
                 p = RuntimeData.system.GetRandomLocation();
 
             fleet.Move(p);
@@ -75,14 +75,8 @@ public class AIPlanner
         if (_knowsAboutPlayer)
             return;
 
-        float d = Vector3.Distance(fleet.location, PlayerData.fleet.location);
-
-        if (d <= fleet.GetVital(FleetVitalType.Detection).current)
-        {
-            _knowsAboutPlayer = true;
-
-            LogManager.getInstance.AddEntry(fleet.name + " has spotted you!", 15f, EntryType.Combat);
-        }
+        _knowsAboutPlayer = true;
+        LogManager.getInstance.AddEntry(fleet.name + " has spotted you!", 15f, EntryType.Combat);
     }
 
     IEnumerator ExecuteAsync()

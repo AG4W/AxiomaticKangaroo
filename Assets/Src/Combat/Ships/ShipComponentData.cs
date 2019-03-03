@@ -6,7 +6,7 @@ public class ShipComponentData : ScriptableObject
 
     [SerializeField]float _cooldown = 0f;
 
-    [SerializeField]VitalModifier[] _modifiers;
+    [SerializeField]ShipVitalModifier[] _modifiers;
 
     [SerializeField]ShipComponentRarity _rarityBot = ShipComponentRarity.Common;
     [SerializeField]ShipComponentRarity _rarityCap = ShipComponentRarity.Artifact;
@@ -19,7 +19,7 @@ public class ShipComponentData : ScriptableObject
 
     public float cooldown { get { return _cooldown; } }
 
-    public VitalModifier[] modifiers { get { return _modifiers; } }
+    public ShipVitalModifier[] modifiers { get { return _modifiers; } }
 
     public ShipComponentRarity rarityBot { get { return _rarityBot; } }
     public ShipComponentRarity rarityCap { get { return _rarityCap; } }
@@ -41,7 +41,7 @@ public class ShipComponent
     float _cooldown;
     float _cooldownTimestamp;
 
-    VitalModifier[] _modifiers;
+    ShipVitalModifier[] _modifiers;
 
     ShipComponentType _type;
     Rarity _rarity;
@@ -62,7 +62,7 @@ public class ShipComponent
     public float cooldownRemaining { get { return _hasCooldown ? Mathf.Abs(Time.time - _cooldownTimestamp) : 0f; } }
     public float cooldownRemainingInPercent { get { return _hasCooldown ? (1 - (Mathf.Abs(Time.time - _cooldownTimestamp) / _cooldown)) : 0f; } }
 
-    public VitalModifier[] modifiers { get { return _modifiers; } }
+    public ShipVitalModifier[] modifiers { get { return _modifiers; } }
 
     public ShipComponentType type { get { return _type; } protected set { _type = value; } }
     public Rarity rarity { get { return _rarity; } }

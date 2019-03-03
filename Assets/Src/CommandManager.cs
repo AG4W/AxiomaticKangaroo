@@ -171,45 +171,15 @@ public static class CommandManager
     {
         bool random = parts[2].Equals("random");
 
-        Ship[] ships = null;
-
-        switch (parts[3])
-        {
-            case "civilian":
-                ships = PlayerData.fleet.ships.Where(s => s.allegiance == ShipAllegiance.Civilian).ToArray();
-                break;
-            case "military":
-                ships = PlayerData.fleet.ships.Where(s => s.allegiance == ShipAllegiance.Military).ToArray();
-                break;
-            case "all":
-                ships = PlayerData.fleet.ships.ToArray();
-                break;
-        }
+        Ship[] ships = PlayerData.fleet.ships.ToArray();
 
         if (random)
         {
-            ships.RandomItem().AddModifier(
-                new FleetVitalModifier(
-                    parts[10],
-                    int.Parse(parts[9]),
-                    float.Parse(parts[4]),
-                    (FleetVitalType)Enum.Parse(typeof(FleetVitalType), parts[8], true),
-                    (ModifierSetting)Enum.Parse(typeof(ModifierSetting), parts[7], true),
-                    (ModifierMode)Enum.Parse(typeof(ModifierMode), parts[5], true),
-                    (ModifierTarget)Enum.Parse(typeof(ModifierTarget), parts[6], true)));
+            
         }
         else
         {
-            for (int i = 0; i < ships.Length; i++)
-                ships[i].AddModifier(
-                    new FleetVitalModifier(
-                        parts[10],
-                        int.Parse(parts[9]),
-                        float.Parse(parts[4]),
-                        (FleetVitalType)Enum.Parse(typeof(FleetVitalType), parts[8], true),
-                        (ModifierSetting)Enum.Parse(typeof(ModifierSetting), parts[7], true),
-                        (ModifierMode)Enum.Parse(typeof(ModifierMode), parts[5], true),
-                        (ModifierTarget)Enum.Parse(typeof(ModifierTarget), parts[6], true)));
+            
         }
     }
 

@@ -8,11 +8,11 @@ using System.Linq;
 public class Fleet : PointOfInterest
 {
     string _name;
+
     int _teamID;
 
-    FleetVital[] _vitals;
-
     List<Ship> _ships;
+    FleetVital[] _vitals;
 
     public int teamID { get { return _teamID; } }
 
@@ -44,10 +44,7 @@ public class Fleet : PointOfInterest
     {
         float d = Vector3.Distance(target, base.location);
         //start coroutine
-        base.Move(base.location + (target - base.location).normalized * (d > GetVital(FleetVitalType.Movement).current ? GetVital(FleetVitalType.Movement).current : d), moveTime);
-
-        if(_teamID != 0 && Vector3.Distance(base.location, PlayerData.fleet.location) <= GetVital(FleetVitalType.Detection).current)
-            RuntimeData.system.aiEntities[_teamID - 1].OnPlayerDiscovered();
+        base.Move(base.location + (target - base.location).normalized * (d > GetVital(FleetVitalType.Range).current ? GetVital(FleetVitalType.Range).current : d), moveTime);
     }
 
     public override void OnLeftClick()
@@ -72,13 +69,8 @@ public class Fleet : PointOfInterest
     public void AddShip(Ship s)
     {
         s.OnStatsUpdated += UpdateVitals;
-        s.OnModifierAdded += OnModifierAdded;
-        s.OnModifierRemoved += OnModifierRemoved;
 
         _ships.Add(s);
-
-        for (int i = 0; i < s.modifiers.Count; i++)
-            GetVital(s.modifiers[i].type).AddModifier(s.modifiers[i]);
 
         if(_teamID == 0)
         {
@@ -94,13 +86,8 @@ public class Fleet : PointOfInterest
     public void RemoveShip(Ship s)
     {
         s.OnStatsUpdated -= UpdateVitals;
-        s.OnModifierAdded -= OnModifierAdded;
-        s.OnModifierRemoved -= OnModifierRemoved;
 
         _ships.Remove(s);
-
-        for (int i = 0; i < s.modifiers.Count; i++)
-            GetVital(s.modifiers[i].type).RemoveModifier(s.modifiers[i]);
 
         if(_teamID == 0)
         {
@@ -115,64 +102,32 @@ public class Fleet : PointOfInterest
 
     public void OnTurnEnd()
     {
-        //update values with costs
-        for (int i = 0; i < _vitals.Length; i++)
-            _vitals[i].Update(_vitals[i].changePerTurn);
-
-        //tick modifiers/converters
-        for (int i = 0; i < _ships.Count; i++)
-        {
-            _ships[i].TickModifiers();
-            _ships[i].TickConverters();
-        }
     }
 
-    public FleetVital GetVital(FleetVitalType type)
-    {
-        return _vitals[(int)type];
-    }
     void InitializeVitals()
     {
-        Ship slowestShip = _ships.OrderBy(s => s.GetVital(VitalType.MovementSpeed)).FirstOrDefault();
-
         _vitals = new FleetVital[]
         {
-            new FleetVital(FleetVitalType.ProcessedFuel, _ships.Sum(s => s.GetVital(VitalType.FuelStorage))),
-            new FleetVital(FleetVitalType.Ammunition, _ships.Sum(s => s.GetVital(VitalType.GoodsStorage))),
-            new FleetVital(FleetVitalType.CivilianSupplies, _ships.Sum(s => s.GetVital(VitalType.GoodsStorage))),
-            new FleetVital(FleetVitalType.NebulaGas, _ships.Sum(s => s.GetVital(VitalType.GasStorage))),
-            new FleetVital(FleetVitalType.Veldspar, _ships.Sum(s => s.GetVital(VitalType.OreStorage))),
-            new FleetVital(FleetVitalType.Tritanite, _ships.Sum(s => s.GetVital(VitalType.OreStorage))),
-            new FleetVital(FleetVitalType.Movement, Mathf.Clamp(slowestShip == null ? 0f : 500f / (int)slowestShip.size, 0f, 400f)),
-            new FleetVital(FleetVitalType.Detection, (200f - (ships.Count * 10f)) * 1.5f)
+            new FleetVital(0f, FleetVitalType.ProcessedFuel),
+            new FleetVital(0f, FleetVitalType.Ammunition),
+            new FleetVital(0f, FleetVitalType.CivilianGoods),
+            new FleetVital(0f, FleetVitalType.NebulaGas),
+            new FleetVital(0f, FleetVitalType.Tritanite),
+            new FleetVital(0f, FleetVitalType.Veldspar),
+            new FleetVital(0f, FleetVitalType.Range),
         };
-
-        for (int i = 0; i < _vitals.Length; i++)
-        {
-            _vitals[i].OnCurrentChanged += delegate { OnStatsUpdated?.Invoke(this); };
-            _vitals[i].OnMaxChanged += delegate { OnStatsUpdated?.Invoke(this); };
-            _vitals[i].OnCurrentCritical += OnVitalCritical;
-            _vitals[i].OnVitalUpdated += delegate { OnStatsUpdated?.Invoke(this); };
-        }
-
-        //add ship modifiers
-        for (int i = 0; i < _ships.Count; i++)
-            for (int j = 0; j < _ships[i].modifiers.Count; j++)
-                GetVital(_ships[i].modifiers[j].type).AddModifier(_ships[i].modifiers[j]);
     }
     void UpdateVitals()
     {
-        //recalculate fleet maximum values
-        GetVital(FleetVitalType.ProcessedFuel).SetMax(_ships.Sum(s => s.GetVital(VitalType.FuelStorage)));
-        GetVital(FleetVitalType.Ammunition).SetMax(_ships.Sum(s => s.GetVital(VitalType.GoodsStorage)));
-        GetVital(FleetVitalType.CivilianSupplies).SetMax(_ships.Sum(s => s.GetVital(VitalType.GoodsStorage)));
-        GetVital(FleetVitalType.NebulaGas).SetMax(_ships.Sum(s => s.GetVital(VitalType.GasStorage)));
-        GetVital(FleetVitalType.Veldspar).SetMax(_ships.Sum(s => s.GetVital(VitalType.OreStorage)));
-        GetVital(FleetVitalType.Tritanite).SetMax(_ships.Sum(s => s.GetVital(VitalType.OreStorage)));
+        Ship slowestShip = _ships.OrderBy(s => s.GetVital(VitalType.MovementSpeed)).FirstOrDefault();
 
-        Ship slowestShip = _ships.OrderBy(s => s.GetVital(VitalType.MovementSpeed)).First();
-        GetVital(FleetVitalType.Movement).SetMax(Mathf.Clamp(slowestShip == null ? 0f : 500f / (int)slowestShip.size, 0f, 400f), true);
-        GetVital(FleetVitalType.Detection).SetMax((200f - (ships.Count * 10f)) * 1.5f);
+        GetVital(FleetVitalType.ProcessedFuel).SetMax(_ships.Sum(s => s.GetVital(VitalType.FuelStorage)), false);
+        GetVital(FleetVitalType.Ammunition).SetMax(_ships.Sum(s => s.GetVital(VitalType.GoodsStorage)), false);
+        GetVital(FleetVitalType.CivilianGoods).SetMax(_ships.Sum(s => s.GetVital(VitalType.GoodsStorage)), false);
+        GetVital(FleetVitalType.NebulaGas).SetMax(_ships.Sum(s => s.GetVital(VitalType.GasStorage)), false);
+        GetVital(FleetVitalType.Tritanite).SetMax(_ships.Sum(s => s.GetVital(VitalType.OreStorage)), false);
+        GetVital(FleetVitalType.Veldspar).SetMax(_ships.Sum(s => s.GetVital(VitalType.OreStorage)), false);
+        GetVital(FleetVitalType.Range).SetMax(slowestShip.GetVital(VitalType.MovementSpeed) * 200f, true);
 
         UpdateDetectionAndMovement();
         OnStatsUpdated?.Invoke(this);
@@ -182,16 +137,16 @@ public class Fleet : PointOfInterest
         if (base.prefab == null)
             return;
 
-        UpdateVisualization(
-            base.prefab.transform.Find("detectionRange").GetComponent<LineRenderer>(), 
-            GetVital(FleetVitalType.Detection).current,
-            FleetVital.Color(FleetVitalType.Detection),
-            _teamID != 0);
+        //UpdateVisualization(
+        //    base.prefab.transform.Find("detectionRange").GetComponent<LineRenderer>(), 
+        //    GetVital(FleetVitalType.Detection).current,
+        //    FleetVital.Color(FleetVitalType.Detection),
+        //    _teamID != 0);
 
         UpdateVisualization(
             base.prefab.transform.Find("movementRange").GetComponent<LineRenderer>(), 
-            GetVital(FleetVitalType.Movement).max, 
-            FleetVital.Color(FleetVitalType.Movement),
+            GetVital(FleetVitalType.Range).max, 
+            FleetVital.Color(FleetVitalType.Range),
             true);
     }
     void UpdateVisualization(LineRenderer lr, float range, Color color, bool displayPlayer)
@@ -236,7 +191,7 @@ public class Fleet : PointOfInterest
                 break;
             case FleetVitalType.Ammunition:
                 break;
-            case FleetVitalType.CivilianSupplies:
+            case FleetVitalType.CivilianGoods:
                 DialogueEvent disaster = EventDB.GetDisaster();
 
                 if (base.random.Next(0, 100) * .01f <= disaster.probability)
@@ -248,25 +203,17 @@ public class Fleet : PointOfInterest
                 break;
             case FleetVitalType.Tritanite:
                 break;
-            case FleetVitalType.Movement:
-                break;
-            case FleetVitalType.Detection:
+            case FleetVitalType.Range:
                 break;
             default:
                 break;
         }
     }
-    void OnModifierAdded(FleetVitalModifier fvm)
-    {
-        GetVital(fvm.type).AddModifier(fvm);
-        UpdateVitals();
-    }
-    void OnModifierRemoved(FleetVitalModifier fvm)
-    {
-        GetVital(fvm.type).RemoveModifier(fvm);
-        UpdateVitals();
-    }
 
+    public FleetVital GetVital(FleetVitalType type)
+    {
+        return _vitals[(int)type];
+    }
     public override string GetTooltip()
     {
         string s = "";

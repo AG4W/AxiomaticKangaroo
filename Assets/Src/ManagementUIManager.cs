@@ -336,7 +336,7 @@ public class ManagementUIManager : MonoBehaviour
                 g.transform.Find("portrait").GetComponent<Image>().sprite = o.portrait;
                 g.transform.Find("text").GetComponent<Text>().text = o.ToString();
                 g.GetComponent<GenericTooltipHandler>().Initialize(
-                    null,
+                    () => TooltipManager.getInstance.OpenTooltip(o.GetSummary(), Input.mousePosition),
                     delegate
                     {
                         //unassign old officer
@@ -353,7 +353,7 @@ public class ManagementUIManager : MonoBehaviour
                     },
                     null,
                     null,
-                    null);
+                    () => TooltipManager.getInstance.CloseTooltip());
             }
         }
 
