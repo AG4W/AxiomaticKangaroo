@@ -29,6 +29,7 @@ public static class OverworldManager
             RuntimeData.GenerateNewSystem();
 
         RuntimeData.system.Instantiate();
+        CreateGrid();
 
         if (!RuntimeData.system.pointsOfInterest.Contains(PlayerData.fleet))
             RuntimeData.system.AddPointOfInterest(PlayerData.fleet);
@@ -37,6 +38,7 @@ public static class OverworldManager
 
         //add slot for player
         //this was fucking retarded
+            //^
 
         _uiManager = OverworldUIManager.getInstance;
         _uiManager.Initialize();
@@ -52,6 +54,10 @@ public static class OverworldManager
 
         UpdateSpawnChance();
         EndCurrentTurn();
+    }
+    static void CreateGrid()
+    {
+        HexGrid grid = new HexGrid(RuntimeData.system.size);
     }
 
     public static void EndCurrentTurn()
