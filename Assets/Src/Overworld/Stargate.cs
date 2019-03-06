@@ -9,7 +9,7 @@ public class Stargate : PointOfInterest
 
     StarSystem _system;
 
-    public Stargate(string name, Vector3 location, Random random) : base(name, location, random)
+    public Stargate(string name, Cell cell, Random random) : base(name, cell, random)
     {
         base.type = PointOfInterestType.Wormhole;
 

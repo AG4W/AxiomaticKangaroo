@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class HexMesh : MonoBehaviour
 {
     Mesh _mesh;
+    MeshCollider _collider;
 
     List<Vector3> _vertices = new List<Vector3>();
     List<int> _triangles = new List<int>();
@@ -13,25 +14,29 @@ public class HexMesh : MonoBehaviour
     void Awake()
     {
         _mesh = new Mesh();
+        _collider = this.GetComponent<MeshCollider>();
 
         this.GetComponent<MeshFilter>().mesh = _mesh;
     }
 
-    public void Triangulate(HexCellEntity cell)
+    public void Triangulate()
     {
         _mesh.Clear();
 
         _vertices.Clear();
         _triangles.Clear();
 
-        Vector3 c = Vector3.zero;
-
         for (int i = 0; i < 6; i++)
-            AddTriangle(c, c + HexMetrics.corners[i] * HexMetrics.visiblePercentage, c + HexMetrics.corners[i + 1] * HexMetrics.visiblePercentage);
+            AddTriangle(Vector3.zero, HexMetrics.GetHexagonPoint(i) * HexMetrics.visiblePercentage, HexMetrics.GetHexagonPoint(i + 1) * HexMetrics.visiblePercentage);
 
         _mesh.vertices = _vertices.ToArray();
         _mesh.triangles = _triangles.ToArray();
         _mesh.RecalculateNormals();
+
+        _collider.sharedMesh = null;
+        _collider.sharedMesh = _mesh;
+        _collider.convex = true;
+        _collider.isTrigger = true;
     }
     void AddTriangle(Vector3 p1, Vector3 p2, Vector3 p3)
     {

@@ -18,6 +18,7 @@ public class StarSystem
     int _seed;
 
     Random _random;
+    HexGrid _grid;
 
     Star _star;
 
@@ -34,6 +35,7 @@ public class StarSystem
     public int seed { get { return _seed; } }
     public int size { get { return _size; } }
 
+    public HexGrid grid { get { return _grid; } }
     public Star star { get { return _star; } }
 
     public List<Stargate> stargates { get { return _stargates; } }
@@ -55,6 +57,8 @@ public class StarSystem
 
     public void Generate()
     {
+        _grid = new HexGrid(_size, _random);
+
         GenerateStar();
         GenerateWormholes();
         GenerateNebulas();
@@ -67,7 +71,7 @@ public class StarSystem
         //generate star, always at 0,random?, 0 
         _star = new Star(
             NameGenerator.GetPOIName(PointOfInterestType.Star),
-            Vector3.zero,
+           _grid.Get(0, 0),
             _random);
 
         _celestials.Add(_star);
@@ -81,7 +85,7 @@ public class StarSystem
         {
             Stargate s = new Stargate(
                 "Stargate",
-                GetLocation(500),
+                _grid.GetRandom(),
                 _random);
 
             _stargates.Add(s);
@@ -96,7 +100,7 @@ public class StarSystem
         {
             Nebula n = new Nebula(
                 "Gas Clouds",
-                GetLocation(_random.Next(100, 150)),
+                _grid.GetRandom(),
                 _random);
 
             _nebulas.Add(n);
@@ -111,7 +115,7 @@ public class StarSystem
         {
             Wormhole w = new Wormhole(
                 "Uncharted Wormhole",
-                GetRandomLocation(20),
+                _grid.GetRandom(),
                 _random);
 
             _wormholes.Add(w);
@@ -141,8 +145,8 @@ public class StarSystem
             PlanetType pt = (PlanetType)_random.Next(0, System.Enum.GetNames(typeof(PlanetType)).Length);
 
             Planet p = new Planet(
-                _star.name + " " + (i + 1).ToRomanNumeral(), 
-                pos,
+                _star.name + " " + (i + 1).ToRomanNumeral(),
+                _grid.GetRandom(),
                 _random, 
                 pt);
 
@@ -164,7 +168,7 @@ public class StarSystem
 
             Structure os = new Structure(
                 Structure.FormatName(m),
-                GetLocation(_planets[_random.Next(0, _planets.Count)].location, 12.5f),
+                _grid.GetRandom(),
                 _random,
                 m);
 
@@ -175,6 +179,8 @@ public class StarSystem
 
     public void Instantiate()
     {
+        _grid.Instantiate();
+
         for (int i = 0; i < _pointsOfInterest.Count; i++)
             _pointsOfInterest[i].Instantiate();
 
@@ -201,7 +207,7 @@ public class StarSystem
             lr.endWidth = 1f;
 
             float angle = 20f;
-            float distance = Vector3.Distance(Vector3.zero, _planets[i].location);
+            float distance = Vector3.Distance(Vector3.zero, _planets[i].cell.location);
 
             for (int a = 0; a < segments; a++)
             {
@@ -237,8 +243,7 @@ public class StarSystem
 
         poi.Instantiate();
 
-        if (OnPointOfInterestAdded != null)
-            OnPointOfInterestAdded(poi);
+        OnPointOfInterestAdded?.Invoke(poi);
     }
     public void RemovePointOfInterest(PointOfInterest poi)
     {
@@ -246,8 +251,7 @@ public class StarSystem
 
         poi.Deinstantiate();
 
-        if (OnPointOfInterestRemoved != null)
-            OnPointOfInterestRemoved(poi);
+        OnPointOfInterestRemoved?.Invoke(poi);
     }
 
     public void RemoveFleet(Fleet fleet)
@@ -280,31 +284,31 @@ public class StarSystem
     {
         Vector3 p = Vector3.zero;
 
-        while (p == Vector3.zero || _celestials.Any(c => Vector3.Distance(c.location, p) < minimumDistanceToOtherCelestial))
+        while (p == Vector3.zero || _celestials.Any(c => Vector3.Distance(c.cell.location, p) < minimumDistanceToOtherCelestial))
             p = GetRandomLocation();
 
         return p;
     }
 
-    public Vector3 GetLocation(float radius)
+    public Vector3 GetLocation(int radius)
     {
-        float x = radius * Mathf.Cos(_random.Next(0, 360));
-        float z = radius * Mathf.Sin(_random.Next(0, 360));
+        int x = Mathf.RoundToInt(radius * Mathf.Cos(_random.Next(0, 360)));
+        int z = Mathf.RoundToInt(radius * Mathf.Sin(_random.Next(0, 360)));
 
         return new Vector3(x, 0, z);
     }
-    public Vector3 GetLocation(float radius, float angle)
+    public Vector3 GetLocation(int radius, float angle)
     {
         angle = Mathf.Clamp(angle, 0, 360);
 
-        float x = radius * Mathf.Cos(angle);
-        float z = radius * Mathf.Sin(angle);
+        int x = Mathf.RoundToInt(radius * Mathf.Cos(angle));
+        int z = Mathf.RoundToInt(radius * Mathf.Sin(angle));
 
         return new Vector3(x, 0, z);
     }
     public Vector3 GetLocation(Vector3 center, float radius)
     {
-        return center + GetLocation(radius);
+        return center + GetLocation((int)radius);
     }
 
     public delegate void PointOfInterestEvent(PointOfInterest poi);

@@ -44,7 +44,7 @@ public static class RuntimeData
     static void OnNewSystem()
     {
         if (PlayerData.fleet == null)
-            PlayerData.Initialize(_system.GetRandomLocation(25));
+            PlayerData.Initialize(_system.grid.GetRandom());
 
         _location = null;
     }
@@ -66,9 +66,9 @@ public static class PlayerData
     public static List<ShipComponent> inventory { get { return _inventory; } }
     public static List<Officer> officers { get { return _officers; } }
 
-    public static void Initialize(Vector3 location)
+    public static void Initialize(Cell cell)
     {
-        _fleet = new Fleet("<color=purple>You</color>", location, new Random(RuntimeData.system.seed), 0, new List<Ship>());
+        _fleet = new Fleet("<color=purple>You</color>", cell, new Random(RuntimeData.system.seed), 0, new List<Ship>());
         _inventory = new List<ShipComponent>();
         _officers = new List<Officer>();
 

@@ -1,25 +1,23 @@
 ﻿using UnityEngine;
 
+//EVEN-Q vertical layout for grid
 public static class HexMetrics
 {
-    const int OUTER_RADIUS = 50;
+    const int SIZE = 25;
     const float VISIBLE_PERCENTAGE = .975f;
 
-    static Vector3[] _corners =
-    {
-        new Vector3(0f, 0f, outerRadius),
-        new Vector3(innerRadius, 0f, .5f * outerRadius),
-        new Vector3(innerRadius, 0f, -.5f * outerRadius),
-        new Vector3(0f, 0f, -outerRadius),
-        new Vector3(-innerRadius, 0f, -.5f * outerRadius),
-        new Vector3(-innerRadius, 0f, .5f * outerRadius),
-        new Vector3(0f, 0f, outerRadius),
-    };
+    public static int size { get { return SIZE; } }
 
-    public static int outerRadius { get { return OUTER_RADIUS; } }
-    public static float innerRadius { get { return (Mathf.Sqrt(3) / 2) * OUTER_RADIUS; } }
+    public static float width { get { return 2 * SIZE; } }
+    public static float height { get { return Mathf.Sqrt(3) * SIZE; } }
 
     public static float visiblePercentage { get { return VISIBLE_PERCENTAGE; } }
+    
+    public static Vector3 GetHexagonPoint(int index)
+    {
+        float d = 60 * index;
+        float r = (Mathf.PI / 180) * d;
 
-    public static Vector3[] corners { get { return _corners; } }
+        return new Vector3(SIZE * Mathf.Cos(r), 0f, SIZE * Mathf.Sin(r));
+    }
 }

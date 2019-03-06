@@ -23,23 +23,11 @@ public class OverworldInputManager : MonoBehaviour
 
     void GetInputs()
     {
-        if (!OverworldManager.isPlayerTurn || PlayerData.fleet.isBusy || DialogueUIManager.getInstance.isOpen || ConsoleManager.getInstance.isOpen)
+        if (DialogueUIManager.getInstance.isOpen || ConsoleManager.getInstance.isOpen)
             return;
 
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-            ProcessLeftClick();
-    }
-
-    void ProcessLeftClick()
-    {
-        if (!OverworldManager.isPlayerTurn || PlayerData.fleet.isBusy || EventSystem.current.IsPointerOverGameObject())
+        if (!OverworldManager.isPlayerTurn || PlayerData.fleet.isBusy)
             return;
-
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit))
-            MovePlayerFleet(hit.point);
     }
 
     public void HandlePoIMouseCallback(CallbackType callbackType, PointOfInterest poi)
@@ -52,7 +40,7 @@ public class OverworldInputManager : MonoBehaviour
                 ProcessPoILeftClick(poi);
                 break;
             case CallbackType.ScrollDown:
-                OverworldCameraManager.getInstance.JumpTo(poi.location);
+                OverworldCameraManager.getInstance.JumpTo(poi.cell.location);
                 break;
             case CallbackType.RightDown:
                 break;
@@ -65,20 +53,13 @@ public class OverworldInputManager : MonoBehaviour
 
     void ProcessPoILeftClick(PointOfInterest poi)
     {
-        if (PlayerData.fleet.GetVital(FleetVitalType.Range).current >= Vector3.Distance(PlayerData.fleet.location, poi.location))
+        if (PlayerData.fleet.GetVital(FleetVitalType.Range).current >= Vector3.Distance(PlayerData.fleet.cell.location, poi.cell.location))
         {
             if (poi.type == PointOfInterestType.Fleet)
                 ((Fleet)poi).Intercept(PlayerData.fleet);
             else
                 poi.Interact();
         }
-        else
-            MovePlayerFleet(poi.location);
-    }
-    void MovePlayerFleet(Vector3 position)
-    {
-        PlayerData.fleet.Move(position);
-        OverworldManager.EndCurrentTurn();
     }
 }
 public enum CallbackType

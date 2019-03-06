@@ -62,14 +62,14 @@ public class OverworldUIManager : MonoBehaviour
     {
         for (int i = 0; i < RuntimeData.system.pointsOfInterest.Count; i++)
         {
-            Vector3 p = _camera.WorldToViewportPoint(RuntimeData.system.pointsOfInterest[i].location);
+            Vector3 p = _camera.WorldToViewportPoint(RuntimeData.system.pointsOfInterest[i].cell.location);
 
             _poiItems[i].SetActive(p.x > 0 && p.x < 1 && p.y > 0 && p.y < 1 && p.z > 0);
 
             if (!_poiItems[i].activeSelf)
                 continue;
 
-            _poiItems[i].transform.position = _camera.WorldToScreenPoint(RuntimeData.system.pointsOfInterest[i].location);
+            _poiItems[i].transform.position = _camera.WorldToScreenPoint(RuntimeData.system.pointsOfInterest[i].cell.location);
         }
     }
 }

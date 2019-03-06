@@ -7,7 +7,7 @@ public class Structure : PointOfInterest
     DialogueEvent _event;
     Module _module;
 
-    public Structure(string name, Vector3 location, Random random, Module module) : base(name, location, random)
+    public Structure(string name, Cell cell, Random random, Module module) : base(name, cell, random)
     {
         base.type = PointOfInterestType.Structure;
 

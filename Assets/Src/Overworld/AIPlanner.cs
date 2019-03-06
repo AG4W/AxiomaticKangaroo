@@ -46,29 +46,6 @@ public class AIPlanner
     {
         //scan at start and end of every move
         ScanForPlayer(fleet);
-
-        float d = Vector3.Distance(fleet.location, PlayerData.fleet.location);
-
-        if (_knowsAboutPlayer)
-        {
-            if (d <= fleet.GetVital(FleetVitalType.Range).current)
-            {
-                PlayerData.fleet.Intercept(fleet);
-                return;
-            }
-            else
-                fleet.Move(PlayerData.fleet.location);
-        }
-        else
-        {
-            Vector3 p = RuntimeData.system.GetRandomLocation();
-
-            while (Vector3.Distance(p, fleet.location) <= fleet.GetVital(FleetVitalType.Range).current)
-                p = RuntimeData.system.GetRandomLocation();
-
-            fleet.Move(p);
-            ScanForPlayer(fleet);
-        }
     }
     void ScanForPlayer(Fleet fleet)
     {
@@ -76,6 +53,7 @@ public class AIPlanner
             return;
 
         _knowsAboutPlayer = true;
+
         LogManager.getInstance.AddEntry(fleet.name + " has spotted you!", 15f, EntryType.Combat);
     }
 

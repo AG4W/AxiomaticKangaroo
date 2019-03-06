@@ -18,7 +18,7 @@ public class Fleet : PointOfInterest
 
     public List<Ship> ships { get { return _ships; } }
 
-    public Fleet(string name, Vector3 location, Random random, int teamID, List<Ship> ships) : base(name, location, random)
+    public Fleet(string name, Cell cell, Random random, int teamID, List<Ship> ships) : base(name, cell, random)
     {
         _name = name;
         _teamID = teamID;
@@ -40,13 +40,6 @@ public class Fleet : PointOfInterest
         return base.prefab;
     }
 
-    public override void Move(Vector3 target, float moveTime = 1)
-    {
-        float d = Vector3.Distance(target, base.location);
-        //start coroutine
-        base.Move(base.location + (target - base.location).normalized * (d > GetVital(FleetVitalType.Range).current ? GetVital(FleetVitalType.Range).current : d), moveTime);
-    }
-
     public override void OnLeftClick()
     {
         if (_teamID == 0)
@@ -57,7 +50,7 @@ public class Fleet : PointOfInterest
 
     public void Intercept(Fleet interceptingFleet)
     {
-        LocalMapData lmd = base.GenerateLocalMapData();
+        LocalMapData lmd = base.cell.localMapData;
         lmd.AddFleet(this);
         lmd.AddFleet(interceptingFleet);
         lmd.SetPlayerKnowsAboutEnemy(true);

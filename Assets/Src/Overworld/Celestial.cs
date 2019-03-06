@@ -4,17 +4,8 @@ using Random = System.Random;
 
 public class Celestial : PointOfInterest
 {
-    public Celestial(string name, Vector3 location, Random random) : base(name, location, random)
+    public Celestial(string name, Cell cell, Random random) : base(name, cell, random)
     {
-    }
-
-    protected override LocalMapData GenerateLocalMapData()
-    {
-        return new LocalMapData(
-            base.name,
-            base.resourceDensities, 
-            base.location, 
-            this);
     }
 
     public override string GetTooltip()
@@ -40,9 +31,9 @@ public class Celestial : PointOfInterest
         if (!infoAvailable)
             s += "Data will become available in " + (threshold - turns) + " days.\n\n";
 
-        s += FleetVital.Format(FleetVitalType.NebulaGas) + ": " + (infoAvailable ? (base.resourceDensities[0] * 100f).ToString("0.##") : "?") + "%\n";
-        s += FleetVital.Format(FleetVitalType.Veldspar) + ": " + (infoAvailable ? (base.resourceDensities[1] * 100f).ToString("0.##") : "?") + "%\n";
-        s += FleetVital.Format(FleetVitalType.Tritanite) + ": " + (infoAvailable ? (base.resourceDensities[2] * 100f).ToString("0.##") : "?") + "%\n";
+        //s += FleetVital.Format(FleetVitalType.NebulaGas) + ": " + (infoAvailable ? (base.resourceDensities[0] * 100f).ToString("0.##") : "?") + "%\n";
+        //s += FleetVital.Format(FleetVitalType.Veldspar) + ": " + (infoAvailable ? (base.resourceDensities[1] * 100f).ToString("0.##") : "?") + "%\n";
+        //s += FleetVital.Format(FleetVitalType.Tritanite) + ": " + (infoAvailable ? (base.resourceDensities[2] * 100f).ToString("0.##") : "?") + "%\n";
 
         return s;
     }

@@ -19,6 +19,7 @@ public static class OverworldManager
     static bool _isPlayerTurn = false;
 
     public static int turnCount { get { return _turnCount; } }
+
     public static bool isPlayerTurn { get { return _isPlayerTurn; } }
 
     public static void Initialize()
@@ -29,22 +30,20 @@ public static class OverworldManager
             RuntimeData.GenerateNewSystem();
 
         RuntimeData.system.Instantiate();
-        CreateGrid();
 
         if (!RuntimeData.system.pointsOfInterest.Contains(PlayerData.fleet))
             RuntimeData.system.AddPointOfInterest(PlayerData.fleet);
 
         _random = new Random(RuntimeData.system.seed);
-
         //add slot for player
         //this was fucking retarded
-            //^
+        //^
 
         _uiManager = OverworldUIManager.getInstance;
         _uiManager.Initialize();
 
         _cameraManager = OverworldCameraManager.getInstance;
-        _cameraManager.JumpTo(PlayerData.fleet.location);
+        _cameraManager.JumpTo(PlayerData.fleet.cell.location);
 
         ToolbarManager.getInstance.Initialize();
 
@@ -54,10 +53,6 @@ public static class OverworldManager
 
         UpdateSpawnChance();
         EndCurrentTurn();
-    }
-    static void CreateGrid()
-    {
-        HexGrid grid = new HexGrid(RuntimeData.system.size);
     }
 
     public static void EndCurrentTurn()
@@ -132,7 +127,7 @@ public static class OverworldManager
 
         Fleet ef = new Fleet(
             "<color=red>" + efn + "</color>",
-            RuntimeData.system.GetRandomLocation(),
+            RuntimeData.system.grid.GetRandom(),
             new Random(RuntimeData.system.seed),
             1,
             ships);

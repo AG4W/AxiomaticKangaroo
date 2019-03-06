@@ -14,7 +14,7 @@ public class Star : Celestial
 
     public Color emission { get { return _emission; } }
 
-    public Star(string name, Vector3 position, Random random) : base(name, position, random)
+    public Star(string name, Cell cell, Random random) : base(name, cell, random)
     {
         base.type = PointOfInterestType.Star;
         base.model = ModelDB.GetStar(random);
