@@ -16,6 +16,8 @@ MonoBehaviour:
   _description: 
   _cooldown: 2
   _modifiers: []
+  _rarityBot: 0
+  _rarityCap: 3
   _minimumSize: 0
   _icon: {fileID: 21300000, guid: 018ad0f70df25fc4db497be72617dcdc, type: 3}
   _autoActivateEnabledByDefault: 1
@@ -26,5 +28,7 @@ MonoBehaviour:
   _detonationVFX: {fileID: 3922428746472051775, guid: 31b1e0d70d048924a9cc393793d27e13,
     type: 3}
   _accuracy: 0.8
-  _range: 200
-  _fofWidth: 50
+  _range: 300
+  _trackingPenalty: 0.25
+  _falloff: 40
+  _fofWidth: 60

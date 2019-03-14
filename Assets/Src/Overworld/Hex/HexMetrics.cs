@@ -3,7 +3,7 @@
 //EVEN-Q vertical layout for grid
 public static class HexMetrics
 {
-    const int SIZE = 25;
+    const int SIZE = 100;
     const float VISIBLE_PERCENTAGE = .975f;
 
     public static int size { get { return SIZE; } }

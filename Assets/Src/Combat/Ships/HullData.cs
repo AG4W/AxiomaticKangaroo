@@ -13,6 +13,8 @@ public class HullData : ScriptableObject
     [SerializeField]float _movementSpeed;
     [SerializeField]float _rotationSpeed;
 
+    [SerializeField]float _acceleration;
+
     [Header("Storage")]
     [SerializeField]float _gasStorage;
     [SerializeField]float _oreStorage;
@@ -37,6 +39,8 @@ public class HullData : ScriptableObject
     public float hitpoints { get { return _hitpoints; } }
     public float movementSpeed { get { return _movementSpeed; } }
     public float rotationSpeed { get { return _rotationSpeed; } }
+
+    public float acceleration { get { return _acceleration; } }
 
     public float gasStorage { get { return _gasStorage; } }
     public float oreStorage { get { return _oreStorage; } }
@@ -68,6 +72,7 @@ public class Hull
     float _hullpoints;
     float _baseMovementSpeed;
     float _baseRotationSpeed;
+    float _acceleration;
 
     float _gasStorage;
     float _oreStorage;
@@ -91,6 +96,8 @@ public class Hull
     public float hullpoints { get { return _hullpoints; } }
     public float baseMovementSpeed { get { return _baseMovementSpeed; } }
     public float baseRotationSpeed { get { return _baseRotationSpeed; } }
+
+    public float acceleration { get { return _acceleration; } }
 
     public float gasStorage { get { return _gasStorage; } }
     public float oreStorage { get { return _oreStorage; } }
@@ -116,6 +123,7 @@ public class Hull
         _hullpoints = hd.hitpoints;
         _baseMovementSpeed = hd.movementSpeed;
         _baseRotationSpeed = hd.rotationSpeed;
+        _acceleration = hd.acceleration;
 
         _gasStorage = hd.gasStorage;
         _oreStorage = hd.oreStorage;

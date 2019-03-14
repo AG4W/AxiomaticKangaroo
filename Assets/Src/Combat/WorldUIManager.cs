@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class WorldUIManager : MonoBehaviour
 {
@@ -20,7 +21,8 @@ public class WorldUIManager : MonoBehaviour
     [SerializeField]GameObject _utilities;
     [SerializeField]GameObject _abilityItem;
 
-    [SerializeField]GameObject _shipSpeedSettings;
+    [SerializeField]Slider _speedGauge;
+    [SerializeField]GameObject _speedButtons;
 
     [SerializeField]Transform _groups;
     [SerializeField]GameObject _groupItem;
@@ -73,8 +75,8 @@ public class WorldUIManager : MonoBehaviour
         _camera = Camera.main;
 
         AlignmentPlane.Initialize();
-        InitializeShipSpeedSelections();
-        InitializeSimulationSpeedSelections();
+        InitializeSpeedControls();
+        InitializeSimulationSpeedControls();
 
         CommandMapper.OnGroupCreated += CreateGroupItem;
         CommandMapper.OnGroupRemoved += RemoveGroupItem;
@@ -84,19 +86,55 @@ public class WorldUIManager : MonoBehaviour
         GameManager.OnLeave += OnLeave;
     }
 
-    void InitializeShipSpeedSelections()
+    void InitializeSpeedControls()
     {
-        for (int i = 0; i < System.Enum.GetValues(typeof(SpeedSetting)).Length; i++)
-        {
-            int a = i;
+        _speedGauge.onValueChanged.AddListener(
+            delegate 
+            {
+                CommandMapper.UpdateTargetSpeed(_speedGauge.value);
+            });
 
-            _shipSpeedSettings.transform.GetChild(i)
-                .GetComponent<Button>()
-                .onClick
-                .AddListener(() => CommandMapper.UpdateCurrentSpeed((SpeedSetting)a));
-        }
+        _speedButtons.transform.Find("burn").GetComponent<GenericTooltipHandler>().Initialize(
+            () => TooltipManager.getInstance.OpenTooltip("Increase max speed for a short period of time, at the loss of rotational speed.", Input.mousePosition),
+            () => CommandMapper.Afterburn(),
+            null,
+            null,
+            () => TooltipManager.getInstance.CloseTooltip());
+
+        _speedButtons.transform.Find("max").GetComponent<GenericTooltipHandler>().Initialize(
+            () => TooltipManager.getInstance.OpenTooltip("Set full speed on all selected ships.", Input.mousePosition),
+            delegate
+            {
+                _speedGauge.SetValueWithoutNotify(1f);
+                CommandMapper.UpdateTargetSpeed(1f);
+            },
+            null,
+            null,
+            () => TooltipManager.getInstance.CloseTooltip());
+
+        _speedButtons.transform.Find("match").GetComponent<GenericTooltipHandler>().Initialize(
+            () => TooltipManager.getInstance.OpenTooltip("Match the max speed of the slowest selected ship.", Input.mousePosition),
+            delegate
+            {
+                _speedGauge.SetValueWithoutNotify(1f);
+                CommandMapper.MatchSpeed();
+            },
+            null,
+            null,
+            () => TooltipManager.getInstance.CloseTooltip());
+
+        _speedButtons.transform.Find("stop").GetComponent<GenericTooltipHandler>().Initialize(
+            () => TooltipManager.getInstance.OpenTooltip("Stop all selected ships.", Input.mousePosition),
+            delegate
+            {
+                _speedGauge.SetValueWithoutNotify(0f);
+                CommandMapper.UpdateTargetSpeed(0f);
+            },
+            null,
+            null,
+            () => TooltipManager.getInstance.CloseTooltip());
     }
-    void InitializeSimulationSpeedSelections()
+    void InitializeSimulationSpeedControls()
     {
         for (int i = 0; i < _simulationSpeed.transform.childCount; i++)
         {
@@ -128,13 +166,17 @@ public class WorldUIManager : MonoBehaviour
     }
     void UpdateSelectedShipInfo(List<ShipEntity> ships)
     {
-        Transform controls = _selectedShips.transform.Find("controls");
+        //Transform controls = _selectedShips.transform.Find("controls");
 
-        controls.Find("name").GetComponent<Text>().text = ships[0].name;
-        controls.Find("class").GetComponent<Text>().text = "n/a";
+        //controls.Find("name").GetComponent<Text>().text = ships[0].name;
+        //controls.Find("class").GetComponent<Text>().text = "n/a";
 
-        controls.Find("hull").GetComponent<Image>().fillAmount = ships[0].GetVital(VitalType.HullPoints).inPercent;
-        controls.Find("shield").GetComponent<Image>().fillAmount = ships[0].GetVital(VitalType.ShieldPoints).inPercent;
+        //controls.Find("hull").GetComponent<Image>().fillAmount = ships[0].GetVital(VitalType.HullPoints).inPercent;
+        //controls.Find("shield").GetComponent<Image>().fillAmount = ships[0].GetVital(VitalType.ShieldPoints).inPercent;
+
+        ShipEntity slowest = ships.OrderBy(s => s.targetSpeed).First();
+
+        _speedGauge.SetValueWithoutNotify(slowest.targetSpeed / slowest.GetVital(VitalType.MovementSpeed).max);
     }
 
     void UpdateAbilities(List<ShipEntity> ships)

@@ -227,47 +227,35 @@ public static class CommandMapper
             _selectedShips[i].UpdateMovePosition(np);
         }
     }
-    public static void UpdateCurrentSpeed(SpeedSetting ss)
+    public static void UpdateTargetSpeed(float percentage)
     {
-        float speed = 0f;
-
-        switch (ss)
+        if (_selectedShips.Count == 1)
+            _selectedShips[0].UpdateTargetSpeed(percentage);
+        else
         {
-            case SpeedSetting.Full:
-                speed = 1f;
-                break;
-            case SpeedSetting.ThreeQuarters:
-                speed = .75f;
-                break;
-            case SpeedSetting.Half:
-                speed = .5f;
-                break;
-            case SpeedSetting.Silent:
-                speed = .25f;
-                break;
-            case SpeedSetting.Match:
-                //find lowest max speed, and use that as direct value
-                speed = Mathf.Infinity;
+            float speed = _selectedShips.OrderBy(s => s.GetVital(VitalType.MovementSpeed).max).First().GetVital(VitalType.MovementSpeed).max;
+            speed *= percentage;
 
-                for (int i = 0; i < _selectedShips.Count; i++)
-                {
-                    if (_selectedShips[i].GetVital(VitalType.MovementSpeed).max < speed)
-                        speed = _selectedShips[i].GetVital(VitalType.MovementSpeed).max;
-                }
-
-                break;
-            default:
-                speed = -1f;
-                break;
+            for (int i = 0; i < _selectedShips.Count; i++)
+                _selectedShips[i].UpdateTargetSpeed(speed / _selectedShips[i].GetVital(VitalType.MovementSpeed).max);
         }
+    }
+    public static void MatchSpeed()
+    {
+        ShipEntity slowest = _selectedShips.OrderBy(s => s.GetVital(VitalType.MovementSpeed).max).First();
 
         for (int i = 0; i < _selectedShips.Count; i++)
         {
-            if (ss == SpeedSetting.Match)
-                _selectedShips[i].SetCurrentSpeed(speed);
+            if (_selectedShips[i] == slowest)
+                _selectedShips[i].UpdateTargetSpeed(1f);
             else
-                _selectedShips[i].UpdateCurrentSpeed(speed);
+                _selectedShips[i].UpdateTargetSpeed(slowest.GetVital(VitalType.MovementSpeed).max / _selectedShips[i].GetVital(VitalType.MovementSpeed).max);
         }
+    }
+    public static void Afterburn()
+    {
+        for (int i = 0; i < _selectedShips.Count; i++)
+            _selectedShips[i].Burn();
     }
 
     public static void SetResourceTarget(ResourceEntity re)

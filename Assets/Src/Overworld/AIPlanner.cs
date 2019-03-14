@@ -26,7 +26,7 @@ public class AIPlanner
         //Debug.Log("Executing AIPlanner");
         //assume only hostile fleets atm
         //and always have them move towards player
-        OverworldUIManager.getInstance.StartCoroutine(ExecuteAsync());
+        CoroutineSurrogate.getInstance.StartCoroutine(ExecuteAsync());
     }
 
     public void AddFleet(Fleet fleet)

@@ -16,6 +16,8 @@ MonoBehaviour:
   _description: 
   _cooldown: 8
   _modifiers: []
+  _rarityBot: 0
+  _rarityCap: 3
   _minimumSize: 2
   _icon: {fileID: 21300000, guid: 018ad0f70df25fc4db497be72617dcdc, type: 3}
   _autoActivateEnabledByDefault: 1
@@ -28,4 +30,6 @@ MonoBehaviour:
     type: 3}
   _accuracy: 0.95
   _range: 800
+  _trackingPenalty: 0.1
+  _falloff: 5
   _fofWidth: 50

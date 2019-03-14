@@ -4,8 +4,8 @@ public class HexCellEntity : MonoBehaviour
 {
     Renderer _renderer;
 
-    Color _defaultColor;
-    Color _fleetOccupyColor = Color.red;
+    Color _color;
+    Color _occupyColor = new Color(1f, 0f, 0f, .2f);
 
     Cell _cell;
 
@@ -14,9 +14,7 @@ public class HexCellEntity : MonoBehaviour
         this.GetComponent<HexMesh>().Triangulate();
 
         _renderer = this.GetComponent<Renderer>();
-
-        _defaultColor = _renderer.material.color;
-        //_fleetOccupyColor.a *= .05f;
+        _color = _renderer.material.color;
     }
 
     public void Initialize(Cell cell)
@@ -27,10 +25,8 @@ public class HexCellEntity : MonoBehaviour
 
     public void OnMouseEnter()
     {
-        _defaultColor = _renderer.material.color;
-
-        Color c = _defaultColor;
-        c.a *= 2;
+        Color c = _renderer.material.color;
+        c.a = .2f;
 
         _renderer.material.color = c;
     }
@@ -40,17 +36,14 @@ public class HexCellEntity : MonoBehaviour
     }
     public void OnMouseExit()
     {
-        if (_cell.isOccupied)
-            _renderer.material.color = _fleetOccupyColor;
-        else
-            _renderer.material.color = _defaultColor;
+        Color c = _renderer.material.color;
+        c.a = .05f;
+
+        _renderer.material.color = c;
     }
 
-    void OnStatusChanged(bool status)
+    void OnStatusChanged(bool isOccupied)
     {
-        if (status)
-            _renderer.material.color = _fleetOccupyColor;
-        else
-            _renderer.material.color = _defaultColor;
+        _renderer.material.color = isOccupied ? _occupyColor : _color;
     }
 }

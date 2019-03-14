@@ -9,11 +9,17 @@ public class ProjectileWeaponData : WeaponData
     [Range(0f, 1f)][SerializeField]float _accuracy = 1f;
     [SerializeField]float _range;
 
+    [Range(0f, 1f)][SerializeField]float _trackingPenalty;
+    [Range(0f, 100f)][SerializeField]float _falloff;
+
     [Header("Fields of Fire")]
     [Range(1, 180)][SerializeField]float _fofWidth;
 
     public float accuracy { get { return _accuracy; } }
     public float range { get { return _range; } }
+
+    public float trackingModifier { get { return _trackingPenalty; } }
+    public float falloff { get { return _falloff; } }
 
     public float fofWidth { get { return _fofWidth; } }
 
@@ -27,7 +33,14 @@ public class ProjectileWeapon : Weapon
     float _accuracy;
     float _fofWidth;
 
+    float _trackingModifier;
+    float _falloff;
+
     public float accuracy { get { return _accuracy; } }
+
+    public float trackingModifier { get { return _trackingModifier; } }
+    public float falloff { get { return _falloff; } }
+
     public float fofWidth { get { return _fofWidth; } }
 
     public ProjectileWeapon(ProjectileWeaponData pwd) : base(pwd)
@@ -35,6 +48,10 @@ public class ProjectileWeapon : Weapon
         base.range = (pwd.range * base.rarity.modifier);
 
         _accuracy = Mathf.Clamp((pwd.accuracy * base.rarity.modifier), 0f, 100f);
+
+        _trackingModifier = pwd.trackingModifier / base.rarity.modifier;
+        _falloff = pwd.falloff / base.rarity.modifier;
+
         _fofWidth = Mathf.Clamp((pwd.fofWidth * base.rarity.modifier), 1f, 180f);
     }
 
@@ -49,18 +66,33 @@ public class ProjectileWeapon : Weapon
         if (!IsInsideFieldOfFire(target, shooter, true) && !IsInsideFieldOfFire(target, shooter, false))
             return;
 
-        float fa = _accuracy;
+        float fa = _accuracy * 100f;
 
-        //apply target size penalties
-        fa -= _accuracy * ((int)target.ship.size * .1f);
+        //apply target size/speed penalties
+        //battleships are considered easy targets, and give neither negative/positive bonuses.
+        //larger ships are easier to hit, smaller harder.
+        //5% per class in either direction
+        fa += ((int)target.ship.size - (int)HullClass.Battleship) * 5f;
+        //ship moves faster -> harder to track accurately
+        fa -= target.GetVital(VitalType.MovementSpeed).current * _trackingModifier;
+        //similar for distance
+        fa -= (Vector3.Distance(target.transform.position, shooter.transform.position) / base.range) * _falloff;
+        //clamp to sane values, all shots have a .5% to hit, atleast.
+        fa = Mathf.Clamp(fa, .5f, 100f);
 
-        bool hit = Random.Range(0f, 1f) <= fa;
+        if (shooter.teamID == 0)
+            Debug.Log(shooter.name + " fired!\n" +
+                "Unmodified Accuracy: " + _accuracy * 100f + "%\n" +
+                "Size Penalty: " + (((int)target.ship.size - (int)HullClass.Battleship) * 5f).ToString("+0.##;-0.##") + "%\n" +
+                "Tracking Penalty: " + (target.GetVital(VitalType.MovementSpeed).current * _trackingModifier).ToString() + "%\n" +
+                "Distance Penalty: " + ((Vector3.Distance(target.transform.position, shooter.transform.position) / base.range) * _falloff).ToString() + "%\n" +
+                "Final Accuracy: " + fa + "%");
 
-        //on hit
-        if (hit)
-            CoroutineSurrogate.getInstance.StartCoroutine(MoveProjectile(shooter.transform.position, target, true));
-        else
-            CoroutineSurrogate.getInstance.StartCoroutine(MoveProjectile(shooter.transform.position, target, false));
+        CoroutineSurrogate.getInstance.StartCoroutine(
+            MoveProjectile(
+                shooter.transform.position, 
+                target, 
+                Random.Range(0f, 100f) <= fa));
 
         //activate cooldown
         base.StartCooldown();
@@ -80,33 +112,42 @@ public class ProjectileWeapon : Weapon
     IEnumerator MoveProjectile(Vector3 start, ShipEntity target, bool hit)
     {
         GameObject projectile = Object.Instantiate(base.shotVFX, start, Quaternion.identity, null);
-        Vector3 miss = target.transform.position + Random.onUnitSphere * 10f;
-        Vector3 hitpos = target.transform.position + (base.owner.transform.position - target.transform.position).normalized * (2 + (int)target.ship.size);
+        Vector3 targetPos = hit ? target.transform.position + (base.owner.transform.position - target.transform.position).normalized * (2 + (int)target.ship.size) : target.transform.position + Random.onUnitSphere * 12.5f;
+        Vector3 lastKnownPos;
 
         float d = Vector3.Distance(start, target.transform.position);
         float tt = d / base.speed;
         float t = 0f;
 
-        while (t <= tt && target != null)
+        while (t <= tt)
         {
             t += Time.deltaTime;
+            lastKnownPos = targetPos;
 
-            hitpos = target.transform.position + (start - target.transform.position).normalized * (2 + (int)target.ship.size);
-            projectile.transform.position = Vector3.Lerp(start, hit ? hitpos : miss, t / tt);
-            projectile.transform.LookAt(hit ? target.transform.position : miss);
+            if (target != null)
+            {
+                if(hit)
+                    targetPos = target.transform.position + (start - target.transform.position).normalized * (2 + (int)target.ship.size);
+
+                projectile.transform.position = Vector3.Lerp(start, targetPos, t / tt);
+                projectile.transform.LookAt(targetPos);
+            }
+            else
+            {
+                projectile.transform.position = Vector3.Lerp(start, lastKnownPos, t / tt);
+                projectile.transform.LookAt(lastKnownPos);
+            }
+
             yield return null;
         }
 
-        if(target != null)
+        if(target != null && hit)
         {
-            if (hit)
-            {
-                base.SpawnShieldVFX(-projectile.transform.forward.normalized, hitpos, target);
-                target.ApplyDamage(base.GetDamage());
-            }
+            base.SpawnShieldVFX(-projectile.transform.forward.normalized, targetPos, target);
+            target.ApplyDamage(base.GetDamage());
         }
 
-        Object.Destroy(Object.Instantiate(detonationVFX, projectile.transform.position, Random.rotation, null), 3f);
+        Object.Destroy(Object.Instantiate(detonationVFX, projectile.transform.position, projectile.transform.rotation, null), 3f);
         Object.Destroy(projectile);
     }
 
@@ -116,7 +157,9 @@ public class ProjectileWeapon : Weapon
         s += "\n\n";
 
         s += "Fire Arc: " + _fofWidth.ToString("0.##") + "°\n";
-        s += "Accuracy: " + (_accuracy * 100f).ToString("0.##") + "%";
+        s += "Accuracy: " + (_accuracy * 100f).ToString("0.##") + "%\n";
+        s += "Tracking: -" + _trackingModifier.ToString("0.##") + "%\n";
+        s += "Falloff: -" + _falloff.ToString("0.##") + "%";
 
         return s;
     }

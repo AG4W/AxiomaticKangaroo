@@ -17,37 +17,26 @@ MonoBehaviour:
   _weaponSlots: 1
   _utilitySlots: 1
   _hitpoints: 30
-  _movementSpeed: 3
-  _rotationSpeed: 0.2
+  _movementSpeed: 20
+  _rotationSpeed: 1
+  _acceleration: 1
   _gasStorage: 1
   _oreStorage: 1
   _fuelStorage: 2
   _goodsStorage: 1
   _maintenanceCosts:
-  - _value: -0.01
+  - _semantic: 
+    _value: -0.01
     _mode: 0
-    _target: 0
-    _isMaintenance: 1
-    _reason: maintenance
-    _duration: -1
     _type: 2
-    _setting: 0
-  - _value: -0.05
+  - _semantic: 
+    _value: -0.05
     _mode: 0
-    _target: 0
-    _isMaintenance: 1
-    _reason: maintenance
-    _duration: -1
     _type: 0
-    _setting: 0
-  - _value: -0.01
+  - _semantic: 
+    _value: -0.01
     _mode: 0
-    _target: 0
-    _isMaintenance: 1
-    _reason: maintenance
-    _duration: -1
     _type: 1
-    _setting: 0
   _size: 0
   _model: {fileID: 1532559623570902, guid: 21a50a7d4cf1ed64397c7278bd3ce1c5, type: 3}
   _destroyedVFX: {fileID: 5831894472829399687, guid: 9c31b7bb417c3f24799c51d44dacf4a0,

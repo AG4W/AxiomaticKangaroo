@@ -37,7 +37,7 @@ public class Move : Command
         if (_position == null)
             return true;
 
-        return Vector3.Distance((Vector3)_position, base.entity.transform.position) < 10f;
+        return Vector3.Distance((Vector3)_position, base.entity.transform.position) < 20f;
     }
 }
 public class Target : Command

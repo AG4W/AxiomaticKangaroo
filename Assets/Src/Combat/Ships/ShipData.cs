@@ -23,6 +23,8 @@ public class Ship
     string _name;
     float[] _vitals;
 
+    float _acceleration;
+
     Weapon[] _weapons;
     Utility[] _utilities;
     ShipComponent[] _components;
@@ -40,6 +42,8 @@ public class Ship
 
     public string name { get { return _name; } }
 
+    public float acceleration { get { return _acceleration; } }
+
     public Weapon[] weapons { get { return _weapons; } }
     public Utility[] utilities { get { return _utilities; } }
     public ShipComponent[] components { get { return _components; } }
@@ -53,9 +57,11 @@ public class Ship
 
     public Ship(ShipData sd)
     {
-        _name = sd.name.Length == 0 ? NameGenerator.GetShipName() : sd.name;
+        _name = sd.name.Length == 0 ? NameGenerator.GetShipName(sd.hull.size) : sd.name;
         _hull = sd.hull.CreateInstance() as Hull;
         _size = _hull.size;
+
+        _acceleration = _hull.acceleration;
 
         _weapons = new Weapon[_hull.weaponSlots];
         _utilities = new Utility[_hull.utilitySlots];

@@ -251,10 +251,9 @@ public static class GameManager
                 heading = heading.normalized;
 
                 if (d <= ships[i].optimalTargetDistance)
-                    ships[i].UpdateMovePosition((target.transform.position + (heading * ships[i].optimalTargetDistance)).Perpendicular(ships[i].transform.up));
+                    ships[i].AddMove(new Move((target.transform.position + (heading * ships[i].optimalTargetDistance).Perpendicular(ships[i].transform.up)), ships[i]), true);
                 else
-                    //update movepos
-                    ships[i].UpdateMovePosition(target.transform.position + (heading * ships[i].optimalTargetDistance));
+                    ships[i].AddMove(new Move((target.transform.position + (heading * ships[i].optimalTargetDistance)), ships[i]), true);
             }
 
             yield return new WaitForSeconds(_aiTickRate);

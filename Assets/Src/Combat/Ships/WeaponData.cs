@@ -90,8 +90,8 @@ public class Weapon : ShipComponent
         s += "Damage: <color=red>" + _minDamage.ToString("0.##") + "</color> - <color=green>" + _maxDamage.ToString("0.##") + "</color>\n";
         s += "Dps: <color=orange>" + dps.ToString("0.##") + "</color>\n\n";
         s += "Range: " + _range.ToString("0.##") + "\n";
-        s += "Speed: " + _speed.ToString("0.##") + "\n";
-        s += "Cooldown: " + base.cooldown.ToString("0.##");
+        s += "Travel Speed: " + _speed.ToString("0.##") + "\n";
+        s += "Cooldown: " + base.cooldown.ToString("0.##") + "s";
 
         return s;
     }

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class ShipVisualEntity : MonoBehaviour
 {
@@ -6,6 +7,9 @@ public class ShipVisualEntity : MonoBehaviour
 
     GameObject _graphics;
     GameObject _destructionVFX;
+
+    [SerializeField]Text[] _nameDecals;
+    [SerializeField]AnimatedPart[] _parts;
 
     public void Initialize(ShipEntity entity, GameObject destructionVFX)
     {
@@ -15,9 +19,23 @@ public class ShipVisualEntity : MonoBehaviour
         _graphics = this.transform.Find("graphics").gameObject;
         _graphics.SetActive(entity.isDiscovered);
 
+        for (int i = 0; i < _nameDecals.Length; i++)
+            _nameDecals[i].text = _entity.name;
+
         entity.OnDiscovered += OnDiscovered;
         entity.OnDestroyed += OnDestroyed;
     }
+
+    void Update()
+    {
+        AnimateParts();
+    }
+#if UNITY_EDITOR
+    void OnDrawGizmos()
+    {
+        AnimateParts();
+    }
+#endif
 
     void OnDiscovered(bool hasBeenDiscovered)
     {
@@ -26,6 +44,12 @@ public class ShipVisualEntity : MonoBehaviour
     void OnDestroyed(ShipEntity s)
     {
         CreateDestructionVFX();
+    }
+
+    void AnimateParts()
+    {
+        for (int i = 0; i < _parts.Length; i++)
+            _parts[i].model.transform.localEulerAngles += _parts[i].rotation * (_parts[i].rotationSpeed * Time.deltaTime);
     }
 
     void CreateDestructionVFX()
@@ -47,4 +71,12 @@ public class ShipVisualEntity : MonoBehaviour
 
         Destroy(Instantiate(_destructionVFX, this.transform.position, Random.rotation, null), 3f);
     }
+}
+[System.Serializable]
+public struct AnimatedPart
+{
+    [SerializeField]public GameObject model;
+
+    [SerializeField]public Vector3 rotation;
+    [SerializeField]public float rotationSpeed;
 }

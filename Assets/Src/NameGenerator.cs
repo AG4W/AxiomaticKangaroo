@@ -4,6 +4,28 @@ using System.Linq;
 
 public static class NameGenerator
 {
+    static string[] _frigates = new string[]
+    {
+        "Roach",
+        "Greenfly",
+        "Wasp",
+        "Mantis",
+        "Beetle",
+        "Hopper",
+        "Locust",
+    };
+    static string[] _cruisers = new string[]
+    {
+        "Stockholm",
+        "Berlin",
+        "Paris",
+        "Tokyo",
+        "Bejing",
+        "Cairo",
+        "Baghdad",
+        "Washington"
+    };
+
     static string[] _descriptives = new string[]
     {
         "Agile",
@@ -219,13 +241,27 @@ public static class NameGenerator
                 return "RANDOM NAME FAILED!";
         }
     }
-    public static string GetShipName()
+    public static string GetShipName(HullClass c)
     {
-        int r = Random.Range(0, 2);
-        if (r == 1)
-            return (_descriptives[Random.Range(0, _descriptives.Length)] + " " + _suffixes[Random.Range(0, _suffixes.Length)]);
-        else
-            return (_suffixes[Random.Range(0, _suffixes.Length)] + " " + _midfixes[Random.Range(0, _midfixes.Length)] + " " + _prefixes[Random.Range(0, _prefixes.Length)]);
+        switch (c)
+        {
+            case HullClass.Frigate:
+                return _frigates.RandomItem();
+            case HullClass.Cruiser:
+                return _cruisers.RandomItem();
+            case HullClass.Destroyer:
+            case HullClass.Battleship:
+            case HullClass.Tanker:
+            case HullClass.FactoryShip:
+            case HullClass.Carrier:
+            case HullClass.Titan:
+            default:
+                int r = Random.Range(0, 2);
+                if (r == 1)
+                    return (_descriptives[Random.Range(0, _descriptives.Length)] + " " + _suffixes[Random.Range(0, _suffixes.Length)]);
+                else
+                    return (_suffixes[Random.Range(0, _suffixes.Length)] + " " + _midfixes[Random.Range(0, _midfixes.Length)] + " " + _prefixes[Random.Range(0, _prefixes.Length)]);
+        }
     }
 
     public static string GetFactionType(FactionType type)

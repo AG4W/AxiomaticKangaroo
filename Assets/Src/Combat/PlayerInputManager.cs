@@ -89,7 +89,7 @@ public class PlayerInputManager : MonoBehaviour
         {
             _mouse0timer += Time.unscaledDeltaTime;
 
-            if (_mouse0timer > _doubleClickThreshold)
+            if (_mouse0timer > _doubleClickThreshold && !EventSystem.current.IsPointerOverGameObject())
                 CommandMapper.OpenSelectionBox(_selectionBoxOrigin);
         }
         if (Input.GetKeyUp(KeyCode.Mouse1))

@@ -59,6 +59,10 @@ public static class Extensions
     {
         return Random.Range(0, array.Length);
     }
+    public static bool IsInRange<T>(this T[] array, int index)
+    {
+        return index >= 0 && index < array.Length;
+    }
 
     public static T RandomItem<T>(this List<T> list)
     {
@@ -81,6 +85,11 @@ public static class Extensions
             romanNumeral += romanNumerals[index];
         }
         return romanNumeral;
+    }
+
+    public static string ToRichText(this Color color)
+    {
+        return "<color=#" + ColorUtility.ToHtmlStringRGB(color) + ">";
     }
 
     public static ShipComponentRarity GetLootRarity(ShipComponentRarity rarityCap, float roll)

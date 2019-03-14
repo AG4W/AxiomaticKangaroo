@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 using System.Collections.Generic;
+using System.Collections;
 
 [RequireComponent(typeof(ShipVisualEntity))]
 public class ShipEntity : MonoBehaviour
@@ -21,6 +22,9 @@ public class ShipEntity : MonoBehaviour
 
     float _scanTimer = 0f;
     float _optimalTargetDistance;
+
+    float _targetSpeed;
+    float _acceleration;
 
     Weapon[] _weapons;
     Utility[] _utilities;
@@ -43,6 +47,7 @@ public class ShipEntity : MonoBehaviour
 
     public float speed { get { return (this.transform.position - _lastPosition).magnitude; } }
     public float optimalTargetDistance { get { return _optimalTargetDistance; } }
+    public float targetSpeed { get { return _targetSpeed; } }
 
     public Weapon[] weapons { get { return _weapons; } }
     public Utility[] utilities { get { return _utilities; } }
@@ -70,6 +75,8 @@ public class ShipEntity : MonoBehaviour
         for (int i = 0; i < _vitals.Length; i++)
             _vitals[i].OnVitalChanged += OnVitalChange;
 
+        _acceleration = ship.acceleration;
+
         _weapons = ship.weapons;
         _utilities = ship.utilities;
         _components = ship.components;
@@ -79,6 +86,8 @@ public class ShipEntity : MonoBehaviour
 
         this.GetComponent<ShipVisualEntity>().Initialize(this, ship.destroyedVFX);
         this.transform.Find("shipUIEntity").GetComponent<ShipUIEntity>().Initialize(this);
+
+        GetVital(VitalType.MovementSpeed).Set(0f);
 
         SetOptimalDistance();
         Deselect();
@@ -96,17 +105,44 @@ public class ShipEntity : MonoBehaviour
 
         _lastPosition = this.transform.position;
     }
+    void OnGUI()
+    {
+        //string debugData = 
+        //    "Current Speed: " + GetVital(VitalType.MovementSpeed).current.ToString("#.##") + "\n\n" +
+        //    "Targeting penalties:\n" +
+        //    "Size: -" + Mathf.Abs((int)_ship.size - System.Enum.GetValues(typeof(HullClass)).Length) * 5f + "%\n" +
+        //    "Speed: -" + GetVital(VitalType.MovementSpeed).current.ToString("#.##") + "%";
+
+        //var position = Camera.main.WorldToScreenPoint(gameObject.transform.position);
+        //var textSize = GUI.skin.label.CalcSize(new GUIContent(debugData));
+        //GUI.Label(new Rect(position.x, Screen.height - position.y, textSize.x, textSize.y), debugData);
+    }
 
     void UpdateLocomotion()
     {
-        //if we have a movepos, move and rotate towards it
-        if (_movePosition != null)
-        {
-            _heading = (Vector3)_movePosition - this.transform.position;
+        UpdateCurrentSpeed();
+        UpdateCurrentRotation();
 
-            Translate();
-            Rotate();
-        }
+        //if we have a movepos, move and rotate towards it
+        _heading = _movePosition != null ? ((Vector3)_movePosition - this.transform.position).normalized : this.transform.forward;
+
+        if (_movePosition == null)
+            SetTargetSpeed(0f);
+
+        Translate();
+        Rotate();
+    }
+    void UpdateCurrentSpeed()
+    {
+        if (GetVital(VitalType.MovementSpeed).current < _targetSpeed)
+            GetVital(VitalType.MovementSpeed).Update(_acceleration * Time.deltaTime);
+        else if (GetVital(VitalType.MovementSpeed).current > _targetSpeed)
+            GetVital(VitalType.MovementSpeed).Update(-_acceleration * Time.deltaTime);
+    }
+    void UpdateCurrentRotation()
+    {
+        Vital r = GetVital(VitalType.RotationSpeed);
+        r.Set(Mathf.Lerp(r.max, r.max * .33f, GetVital(VitalType.MovementSpeed).inPercent));
     }
     void Translate()
     {
@@ -231,6 +267,9 @@ public class ShipEntity : MonoBehaviour
     }
     public void AddMove(Move m, bool clearQueue)
     {
+        if (_moves.Count == 0 && _targetSpeed == 0f)
+            SetTargetSpeed(GetVital(VitalType.MovementSpeed).max);
+
         if (clearQueue)
         {
             _moves.Clear();
@@ -259,13 +298,15 @@ public class ShipEntity : MonoBehaviour
 
         OnTargetChanged?.Invoke(target);
     }
-    public void UpdateCurrentSpeed(float percentageOfMax)
+    public void UpdateTargetSpeed(float percentageOfMax)
     {
-        GetVital(VitalType.MovementSpeed).Update(GetVital(VitalType.MovementSpeed).max * percentageOfMax);
+        SetTargetSpeed(GetVital(VitalType.MovementSpeed).max * percentageOfMax);
     }
-    public void SetCurrentSpeed(float value)
+    void SetTargetSpeed(float value)
     {
-        GetVital(VitalType.MovementSpeed).Set(value);
+        _targetSpeed = value;
+
+        OnTargetSpeedChanged?.Invoke(_targetSpeed);
     }
 
     public void ApplyDamage(float amount)
@@ -296,6 +337,11 @@ public class ShipEntity : MonoBehaviour
         _isDiscovered = status;
 
         OnDiscovered?.Invoke(status);
+    }
+
+    public void Burn()
+    {
+        StartCoroutine(Afterburn());
     }
 
     public ShipVital GetVital(VitalType vt)
@@ -332,6 +378,24 @@ public class ShipEntity : MonoBehaviour
         }
     }
 
+    IEnumerator Afterburn()
+    {
+        float t = 0f;
+
+        float bt = 2.5f;
+        float ba = _acceleration * 25f;
+
+        while(t <= bt)
+        {
+            t += Time.deltaTime;
+
+            _acceleration = Mathf.Lerp(_acceleration, ba, (t / bt) * (t / bt));
+            yield return null;
+        }
+
+        _acceleration = _ship.acceleration;
+    }
+
     public event Vital.VitalEvent OnVitalChanged;
 
     public delegate void TargetChangedEvent(ShipEntity t);
@@ -345,6 +409,8 @@ public class ShipEntity : MonoBehaviour
 
     public delegate void MoveEvent(List<Move> moves, Move current);
     public event MoveEvent OnMovesUpdated;
+    public delegate void TargetSpeedEvent(float value);
+    public event TargetSpeedEvent OnTargetSpeedChanged;
 
     public delegate void SelectionEvent();
     public event SelectionEvent OnSelected;
