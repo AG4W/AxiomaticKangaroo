@@ -52,7 +52,7 @@ public class StarSystem
         _random = new Random(seed);
 
         _seed = seed;
-        _size = 800;// _random.Next(1000, 1500);
+        _size = _random.Next(15, 25);// _random.Next(1000, 1500);
     }
 
     public void Generate()
@@ -71,7 +71,7 @@ public class StarSystem
         //generate star, always at 0,random?, 0 
         _star = new Star(
             NameGenerator.GetPOIName(PointOfInterestType.Star),
-           _grid.Get(0, 0),
+           _grid.Get(_size / 2, _size / 2),
             _random);
 
         _celestials.Add(_star);
@@ -184,7 +184,7 @@ public class StarSystem
         for (int i = 0; i < _pointsOfInterest.Count; i++)
             _pointsOfInterest[i].Instantiate();
 
-        CreateOrbitalLines();
+        //CreateOrbitalLines();
     }
     void CreateOrbitalLines()
     {

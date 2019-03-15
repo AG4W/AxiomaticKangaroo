@@ -50,13 +50,7 @@ public class PointOfInterest
 
     public virtual void Move(Cell cell, float moveTime = 1f)
     {
-        //ayyy lmao
-        //OverworldUIManager.getInstance.StartCoroutine(MoveAsync(location, moveTime));
-        _cell.Exit();
-
         _cell = cell;
-        _cell.Enter();
-
         _prefab.transform.position = cell.location;
     }
 
@@ -85,10 +79,7 @@ public class PointOfInterest
 
     public virtual void Interact()
     {
-        _cell.localMapData.AddFleet(PlayerData.fleet);
-
-        RuntimeData.SetLocalMapData(_cell.localMapData);
-        SceneManager.LoadSceneAsync("LocalMap");
+        Debug.Log("Interacting with " + _name);
     }
 
     public virtual string GetTooltip()

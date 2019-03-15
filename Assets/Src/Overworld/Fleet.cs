@@ -48,6 +48,14 @@ public class Fleet : PointOfInterest
         base.OnLeftClick();
     }
 
+    public override void Move(Cell cell, float moveTime = 1)
+    {
+        base.cell.Leave(this);
+        cell.Occupy(this);
+
+        base.Move(cell, moveTime);
+    }
+
     public void Intercept(Fleet interceptingFleet)
     {
         LocalMapData lmd = base.cell.localMapData;

@@ -25,6 +25,8 @@ public class HexCellEntity : MonoBehaviour
 
     public void OnMouseEnter()
     {
+        TooltipManager.getInstance.OpenTooltip(_cell.GetTooltip(), Input.mousePosition);
+
         Color c = _renderer.material.color;
         c.a = .2f;
 
@@ -32,10 +34,17 @@ public class HexCellEntity : MonoBehaviour
     }
     public void OnMouseDown()
     {
-        PlayerData.fleet.Move(_cell);
+        TooltipManager.getInstance.CloseTooltip();
+
+        if(PlayerData.fleet.cell == _cell)
+            _cell.Enter();
+        else
+            PlayerData.fleet.Move(_cell);
     }
     public void OnMouseExit()
     {
+        TooltipManager.getInstance.CloseTooltip();
+
         Color c = _renderer.material.color;
         c.a = .05f;
 
