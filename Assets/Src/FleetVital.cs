@@ -2,7 +2,11 @@
 
 public class FleetVital : Vital
 {
+    float _changePerTurn;
+
     FleetVitalType _type;
+
+    public float changePerTurn { get { return _changePerTurn; } }
 
     public FleetVitalType type { get { return _type; } }
 

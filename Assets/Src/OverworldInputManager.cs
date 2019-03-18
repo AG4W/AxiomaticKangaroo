@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class OverworldInputManager : MonoBehaviour
 {
@@ -26,8 +25,11 @@ public class OverworldInputManager : MonoBehaviour
         if (DialogueUIManager.getInstance.isOpen || ConsoleManager.getInstance.isOpen)
             return;
 
-        if (!OverworldManager.isPlayerTurn || PlayerData.fleet.isBusy)
+        if (!OverworldManager.isPlayerTurn)
             return;
+
+        if (Input.GetKeyDown(KeyCode.Space))
+            ProcessSpacebar();
     }
 
     public void HandlePoIMouseCallback(CallbackType callbackType, PointOfInterest poi)
@@ -37,7 +39,6 @@ public class OverworldInputManager : MonoBehaviour
             case CallbackType.MouseEnter:
                 break;
             case CallbackType.LeftDown:
-                ProcessPoILeftClick(poi);
                 break;
             case CallbackType.ScrollDown:
                 OverworldCameraManager.getInstance.JumpTo(poi.cell.location);
@@ -51,15 +52,9 @@ public class OverworldInputManager : MonoBehaviour
         }
     }
 
-    void ProcessPoILeftClick(PointOfInterest poi)
+    void ProcessSpacebar()
     {
-        if (PlayerData.fleet.GetVital(FleetVitalType.Range).current >= Vector3.Distance(PlayerData.fleet.cell.location, poi.cell.location))
-        {
-            if (poi.type == PointOfInterestType.Fleet)
-                ((Fleet)poi).Intercept(PlayerData.fleet);
-            else
-                poi.Interact();
-        }
+        OverworldManager.EndCurrentTurn();
     }
 }
 public enum CallbackType

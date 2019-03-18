@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 
 using Random = System.Random;
 
@@ -8,6 +7,7 @@ public class PointOfInterest
     string _name;
 
     Cell _cell;
+    Vector3 _location;
 
     GameObject _model;
     GameObject _prefab;
@@ -19,6 +19,8 @@ public class PointOfInterest
     public string name { get { return _name; } protected set { _name = value; } }
 
     public Cell cell { get { return _cell; } }
+    public Vector3 location { get { return _location; } }
+
     public GameObject model { get { return _model; } protected set { _model = value; } }
     public GameObject prefab { get { return _prefab; } }
     public PointOfInterestType type { get { return _type; } protected set { _type = value; } }
@@ -26,10 +28,11 @@ public class PointOfInterest
     protected Random random { get { return _random; } }
     public bool isBusy { get { return _isBusy; } }
 
-    public PointOfInterest(string name, Cell location, Random random)
+    public PointOfInterest(string name, Cell cell, Random random)
     {
         _name = name;
-        _cell = location;
+        _cell = cell;
+
         _random = random;
 
         _type = PointOfInterestType.Default;
@@ -37,8 +40,20 @@ public class PointOfInterest
 
     public virtual GameObject Instantiate()
     {
+        _cell.AddPointOfInterest(this);
+
+        float boundaries = (HexMetrics.size / 2) * .8f;
+
+        if (_type == PointOfInterestType.Star || _type == PointOfInterestType.Fleet)
+            _location = _cell.location;
+        else
+            _location = _cell.location + new Vector3(
+                _random.NextFloat(-boundaries, boundaries),
+                0f,
+                _random.NextFloat(-boundaries, boundaries));
+
         if (_model != null)
-            _prefab = Object.Instantiate(_model, _cell.location, Quaternion.identity, null);
+            _prefab = Object.Instantiate(_model, _location, Quaternion.identity, null);
 
         return _prefab;
     }
@@ -50,8 +65,14 @@ public class PointOfInterest
 
     public virtual void Move(Cell cell, float moveTime = 1f)
     {
+        //old cell
+        _cell.RemovePointOfInterest(this);
+        //new
         _cell = cell;
-        _prefab.transform.position = cell.location;
+        _cell.AddPointOfInterest(this);
+
+        _location = cell.location;
+        _prefab.transform.position = _location;
     }
 
     public virtual void OnMouseEnter()
@@ -84,15 +105,6 @@ public class PointOfInterest
 
     public virtual string GetTooltip()
     {
-        return GetDistanceTooltip();
-    }
-    protected string GetDistanceTooltip()
-    {
-        if (this == PlayerData.fleet)
-            return "";
-
-        //float daysAway = Vector3.Distance(_location, PlayerData.fleet.location) / PlayerData.fleet.GetVital(FleetVitalType.Range).current;
-        //return (daysAway > 1 ? (daysAway.ToString("0.##") + " days away.") : "In range.");
         return "";
     }
 }

@@ -51,13 +51,13 @@ public class Planet : Celestial
     {
         string s = "";
 
-        s += "Type: " + Format(_planetType) + "\n";
+        s += Format(_planetType);
 
         if (isTerrestrial)
-            s += "Water: " + (_waterLevel * 100f).ToString("0.##") + "%\n\n";
-
-        s += base.GetResourceString();
-        s += "\n" + base.GetDistanceTooltip();
+        {
+            s += "\n\n";
+            s += "Water Amount: " + (_waterLevel * 100f).ToString("0.##") + "%";
+        }
 
         return s;
     }

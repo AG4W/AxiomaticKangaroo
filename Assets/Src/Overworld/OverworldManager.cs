@@ -38,6 +38,7 @@ public static class OverworldManager
         //add slot for player
         //this was fucking retarded
         //^
+        //^^
 
         _uiManager = OverworldUIManager.getInstance;
         _uiManager.Initialize();
@@ -47,7 +48,6 @@ public static class OverworldManager
 
         ToolbarManager.getInstance.Initialize();
 
-        //loading complete callback
         if (!ProgressData.Evaluate(ProgressPoint.ReceivedStartEvent))
             DialogueUIManager.getInstance.DisplayDialogueEvent(EventDB.GetStart());
 
@@ -57,11 +57,7 @@ public static class OverworldManager
 
     public static void EndCurrentTurn()
     {
-        //before turn ends, apply player fleet changes
-        if (_isPlayerTurn)
-            PlayerData.fleet.OnTurnEnd();
-
-        //turn has ended, increment turn index
+        //increment turn index
         if (_turnIndex == RuntimeData.system.aiEntities.Count)
             _turnIndex = 0;
         else
@@ -69,15 +65,11 @@ public static class OverworldManager
 
         _isPlayerTurn = _turnIndex == 0;
 
-        //roll for hostile fleet spawn
         if (_isPlayerTurn)
         {
-            _turnCount++;
+            PlayerData.fleet.OnTurnStart();
 
-            if (_spawnChance > 0 && _random.Next(0, 101) <= _spawnChance)
-                GenerateEnemyFleet();
-
-            UpdateSpawnChance();
+            _turnCount++;        
         }
         else
             RuntimeData.system.aiEntities[_turnIndex - 1].Execute();

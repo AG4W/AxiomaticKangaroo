@@ -17,9 +17,9 @@ MonoBehaviour:
   _weaponSlots: 2
   _utilitySlots: 1
   _hitpoints: 40
-  _movementSpeed: 14
+  _movementSpeed: 10
   _rotationSpeed: 0.75
-  _acceleration: 0.8
+  _acceleration: 0.6
   _gasStorage: 1
   _oreStorage: 1
   _fuelStorage: 2

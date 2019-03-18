@@ -52,7 +52,9 @@ public class StarSystem
         _random = new Random(seed);
 
         _seed = seed;
-        _size = _random.Next(15, 25);// _random.Next(1000, 1500);
+
+        while (_size == 0 || _size % 2 == 0)
+            _size = _random.Next(7, 15);
     }
 
     public void Generate()

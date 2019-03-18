@@ -24,7 +24,7 @@ public class ToolbarManager : MonoBehaviour
         InitializeButtons();
         InitializeResources();
 
-        PlayerData.fleet.OnStatsUpdated += UpdateAllResourceItems;
+        PlayerData.fleet.OnVitalChanged += UpdateResourceItem;
     }
 
     void InitializeButtons()
@@ -132,20 +132,22 @@ public class ToolbarManager : MonoBehaviour
         Instantiate(_toolbarSeparator, _toolbar);
     }
 
-    void UpdateAllResourceItems(Fleet fleet)
+    //void UpdateAllResourceItems(Fleet fleet)
+    //{
+    //    for (int i = 0; i < System.Enum.GetNames(typeof(FleetVitalType)).Length; i++)
+    //        UpdateResourceItem(fleet.GetVital((FleetVitalType)i));
+    //}
+    void UpdateResourceItem(Vital v)
     {
-        for (int i = 0; i < System.Enum.GetNames(typeof(FleetVitalType)).Length; i++)
-            UpdateResourceItem(fleet.GetVital((FleetVitalType)i));
-    }
-    void UpdateResourceItem(FleetVital vital)
-    {
+        FleetVital vital = v as FleetVital;
+
         Text t = _resourceItems[(int)vital.type].transform.Find("current").GetComponent<Text>();
         Text c = _resourceItems[(int)vital.type].transform.Find("changePerTurn").GetComponent<Text>();
 
         t.text = vital.ToString();
         t.color = Color.Lerp(Color.red, Color.green, vital.inPercent);
 
-        c.text = "(0)";// + vital.changePerTurn.ToString("0.##") + ")";
-        //c.color = vital.changePerTurn == 0 ? Color.yellow : vital.changePerTurn > 0 ? Color.green : Color.red;
+        c.text = "(" + vital.changePerTurn.ToString("+0.##;-0.##;0") + ")";
+        c.color = vital.changePerTurn == 0 ? Color.yellow : vital.changePerTurn > 0 ? Color.green : Color.red;
     }
 }

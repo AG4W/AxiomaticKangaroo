@@ -3,7 +3,7 @@
 //EVEN-Q vertical layout for grid
 public static class HexMetrics
 {
-    const int SIZE = 150;
+    const int SIZE = 100;
     const float VISIBLE_PERCENTAGE = .975f;
 
     public static int size { get { return SIZE; } }
@@ -12,7 +12,7 @@ public static class HexMetrics
     public static float height { get { return Mathf.Sqrt(3) * SIZE; } }
 
     public static float visiblePercentage { get { return VISIBLE_PERCENTAGE; } }
-    
+
     public static Vector3 GetHexagonPoint(int index)
     {
         float d = 60 * index;

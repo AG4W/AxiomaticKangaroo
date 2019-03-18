@@ -61,4 +61,9 @@ public class Star : Celestial
         l.shadows = LightShadows.None;
         //model.GetComponentInChildren<Light>().color = _emission;
     }
+
+    public override string GetTooltip()
+    {
+        return "The local star in this system.";
+    }
 }

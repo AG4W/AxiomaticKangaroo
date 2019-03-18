@@ -45,7 +45,7 @@ public class Stargate : PointOfInterest
         s += "Leads to [" + _system.star.name + "]:";
         s += "\n";
 
-        s += primitiveDataAvailable ? "" : "Primitive data will become available in " + (DifficultyUtils.Multiply(RuntimeData.save.data.difficulty, 5) - OverworldManager.turnCount) + " turn(s).\n";
+        s += primitiveDataAvailable ? "" : "Basic data will become available in " + (DifficultyUtils.Multiply(RuntimeData.save.data.difficulty, 5) - OverworldManager.turnCount) + " turn(s).\n";
         s += advancedDataAvailable ? "" : "Advanced data will become available in " + (DifficultyUtils.Multiply(RuntimeData.save.data.difficulty, 8) - OverworldManager.turnCount) + " turn(s).\n";
         s += "\n";
 
@@ -72,7 +72,6 @@ public class Stargate : PointOfInterest
         }
 
         s += "<color=" + (PlayerData.fleet.GetVital(FleetVitalType.ProcessedFuel).current >= _jumpCost ? "white" : "red") + ">Jump cost: " + _jumpCost + "</color> " + FleetVital.Format(FleetVitalType.ProcessedFuel);
-        s += "\n\n" + base.GetDistanceTooltip();
 
         return s;
     }

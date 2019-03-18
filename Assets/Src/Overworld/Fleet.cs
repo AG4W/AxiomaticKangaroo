@@ -36,7 +36,6 @@ public class Fleet : PointOfInterest
     public override GameObject Instantiate()
     {
         base.Instantiate();
-        UpdateDetectionAndMovement();
         return base.prefab;
     }
 
@@ -50,21 +49,31 @@ public class Fleet : PointOfInterest
 
     public override void Move(Cell cell, float moveTime = 1)
     {
-        base.cell.Leave(this);
+        float distance = base.cell.Distance(cell);
+
+        //not enough movepoints
+        if(distance > GetVital(FleetVitalType.Range).current)
+        {
+            Debug.Log("Too far away!");
+            return;
+        }
+        if (GetVital(FleetVitalType.ProcessedFuel).current <= cell.travelCosts[0])
+        {
+            Debug.Log("Not enough fuel!");
+            return;
+        }
+
+        GetVital(FleetVitalType.Range).Update(-distance);
+        GetVital(FleetVitalType.ProcessedFuel).Update(cell.travelCosts[0]);
+        GetVital(FleetVitalType.CivilianGoods).Update(cell.travelCosts[1]);
+
         cell.Occupy(this);
 
+        base.cell.Leave(this);
         base.Move(cell, moveTime);
-    }
 
-    public void Intercept(Fleet interceptingFleet)
-    {
-        LocalMapData lmd = base.cell.localMapData;
-        lmd.AddFleet(this);
-        lmd.AddFleet(interceptingFleet);
-        lmd.SetPlayerKnowsAboutEnemy(true);
-
-        RuntimeData.SetLocalMapData(lmd);
-        SceneManager.LoadSceneAsync("LocalMap");
+        if (GetVital(FleetVitalType.Range).current <= 0)
+            OverworldManager.EndCurrentTurn();
     }
 
     public void AddShip(Ship s)
@@ -101,8 +110,14 @@ public class Fleet : PointOfInterest
         UpdateVitals();
     }
 
-    public void OnTurnEnd()
+    public void OnTurnStart()
     {
+        //reset
+        GetVital(FleetVitalType.Range).Set(GetVital(FleetVitalType.Range).max);
+
+        //apply changes
+        for (int i = 0; i < _vitals.Length; i++)
+            _vitals[i].Update(_vitals[i].changePerTurn);
     }
 
     void InitializeVitals()
@@ -117,6 +132,9 @@ public class Fleet : PointOfInterest
             new FleetVital(0f, FleetVitalType.Veldspar),
             new FleetVital(0f, FleetVitalType.Range),
         };
+
+        for (int i = 0; i < _vitals.Length; i++)
+            _vitals[i].OnVitalChanged += OnVitalChange;
     }
     void UpdateVitals()
     {
@@ -128,62 +146,17 @@ public class Fleet : PointOfInterest
         GetVital(FleetVitalType.NebulaGas).SetMax(_ships.Sum(s => s.GetVital(VitalType.GasStorage)), false);
         GetVital(FleetVitalType.Tritanite).SetMax(_ships.Sum(s => s.GetVital(VitalType.OreStorage)), false);
         GetVital(FleetVitalType.Veldspar).SetMax(_ships.Sum(s => s.GetVital(VitalType.OreStorage)), false);
-        GetVital(FleetVitalType.Range).SetMax(slowestShip.GetVital(VitalType.MovementSpeed) * 200f, true);
-
-        UpdateDetectionAndMovement();
-        OnStatsUpdated?.Invoke(this);
+        GetVital(FleetVitalType.Range).SetMax(2, false);
     }
-    void UpdateDetectionAndMovement()
+
+    void OnVitalChange(Vital vital)
     {
-        if (base.prefab == null)
-            return;
+        OnVitalChanged?.Invoke(vital);
+        FleetVital v = vital as FleetVital;
 
-        //UpdateVisualization(
-        //    base.prefab.transform.Find("detectionRange").GetComponent<LineRenderer>(), 
-        //    GetVital(FleetVitalType.Detection).current,
-        //    FleetVital.Color(FleetVitalType.Detection),
-        //    _teamID != 0);
-
-        UpdateVisualization(
-            base.prefab.transform.Find("movementRange").GetComponent<LineRenderer>(), 
-            GetVital(FleetVitalType.Range).max, 
-            FleetVital.Color(FleetVitalType.Range),
-            true);
+        if (v.type == FleetVitalType.Range && v.current <= 0)
+            OverworldManager.EndCurrentTurn();
     }
-    void UpdateVisualization(LineRenderer lr, float range, Color color, bool displayPlayer)
-    {
-        //create detection visualization
-        lr.enabled = displayPlayer;
-
-        if (!displayPlayer)
-            return;
-
-        int segments = 80;
-
-        lr.positionCount = segments;
-        lr.startWidth = 1f;
-        lr.endWidth = 1f;
-        lr.startColor = color;
-        lr.endColor = color;
-
-        float angle = 20f;
-        float distance = range;
-
-        for (int a = 0; a < segments; a++)
-        {
-            float x;
-            float y = 0;
-            float z;
-
-            x = Mathf.Sin(Mathf.Deg2Rad * angle) * distance;
-            z = Mathf.Cos(Mathf.Deg2Rad * angle) * distance;
-
-            lr.SetPosition(a, new Vector3(x, y, z));
-
-            angle += (360f / segments);
-        }
-    }
-
     void OnVitalCritical(FleetVital vital)
     {
         switch (vital.type)
@@ -215,6 +188,7 @@ public class Fleet : PointOfInterest
     {
         return _vitals[(int)type];
     }
+
     public override string GetTooltip()
     {
         string s = "";
@@ -224,12 +198,11 @@ public class Fleet : PointOfInterest
         for (int i = 0; i < _ships.Count; i++)
             s += "<i><color=yellow>" + _ships[i].name + "</color></i>, " + _ships[i].GetClass() + (i < _ships.Count - 1 ? ",\n" : ".\n\n");
 
-        s += "Military Power: <color=red>" + _ships.Sum(sh => sh.weapons.Sum(w => w.dps)).ToString("#.##") + "</color>.\n";
-        s += "\n" + base.GetTooltip();
+        s += "Power: <color=red>" + _ships.Sum(sh => sh.weapons.Sum(w => w.dps)).ToString("#.##") + "</color>.";
 
         return s;
     }
 
-    public delegate void FleetStatsEvent(Fleet fleet);
-    public event FleetStatsEvent OnStatsUpdated;
+    public delegate void VitalEvent(Vital v);
+    public event VitalEvent OnVitalChanged;
 }

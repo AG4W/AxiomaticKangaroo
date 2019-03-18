@@ -6,8 +6,8 @@ using System.Linq;
 //localmapsize will be fixed size
 public class LocalMapData
 {
-    const float WORLD_TO_LOCAL_SIZE_SCALE = 50f;
-    const float WORLD_TO_LOCAL_DISTANCE_SCALE = 100f;
+    const float WORLD_TO_LOCAL_SIZE_SCALE = 100f;
+    const float WORLD_TO_LOCAL_DISTANCE_SCALE = 1000f;
 
     const int LOCAL_MAP_SIZE = 3000;
 
@@ -17,12 +17,12 @@ public class LocalMapData
     string _name;
     float[] _resourceDensities;
 
-    Vector3 _location;
+    Vector3 _center;
 
     StarSystem _system;
     Celestial _orbital;
 
-    //List<LocalCelestial> _localCelestials = new List<LocalCelestial>();
+    List<LocalCelestial> _localCelestials = new List<LocalCelestial>();
     List<Fleet> _localFleets = new List<Fleet>();
 
     bool _playerKnowsAboutEnemy = false;
@@ -32,30 +32,50 @@ public class LocalMapData
 
     public float[] resourceDensities { get { return _resourceDensities; } }
 
-    public Vector3 location { get { return _location; } }
+    public Vector3 center { get { return _center; } }
 
-    //public List<LocalCelestial> localCelestials { get { return _localCelestials; } }
     public List<Fleet> fleets { get { return _localFleets; } }
     
     public bool playerKnowsAboutEnemy { get { return _playerKnowsAboutEnemy; } }
+    public bool hasResources
+    {
+        get
+        {
+            for (int i = 0; i < _resourceDensities.Length; i++)
+            {
+                if (_resourceDensities[i] > 0f)
+                    return true;
+            }
 
-    public LocalMapData(string name, float[] resourceDensities, Vector3 location, Celestial orbit = null)
+            return false;
+        }
+    }
+
+    public LocalMapData(string name, float[] resourceDensities, Vector3 center, Celestial orbital = null)
     {
         _name = name;
         _resourceDensities = resourceDensities;
-        _location = location;
-
-        //CacheCelestials(orbit);
+        _center = center;
+        _orbital = orbital;
     }
 
     public void Instantiate()
     {
-        //GenerateCelestials();
-        GenerateResources();
+        InstantiateCelestials();
+        InstantiateResources();
     }
     public void SetPlayerKnowsAboutEnemy(bool status)
     {
         _playerKnowsAboutEnemy = status;
+    }
+
+    public void AddCelestial(Celestial c)
+    {
+        _localCelestials.Add(new LocalCelestial(c, (c.location - center).normalized));
+    }
+    public void RemoveCelestial(Celestial c)
+    {
+        _localCelestials.Remove(_localCelestials.FirstOrDefault(lc => lc.celestial == c));
     }
     public void AddFleet(Fleet fleet)
     {
@@ -113,7 +133,21 @@ public class LocalMapData
     //        g.transform.localScale *= i == _localCelestials.Count - 1 ? WORLD_TO_LOCAL_SIZE_SCALE * 5 : WORLD_TO_LOCAL_SIZE_SCALE;
     //    }
     //}
-    void GenerateResources()
+    void InstantiateCelestials()
+    {
+        for (int i = 0; i < _localCelestials.Count; i++)
+        {
+            if (_localCelestials[i].celestial.model == null)
+                continue;
+
+            GameObject g = Object.Instantiate(_localCelestials[i].celestial.model);
+
+            g.transform.position = Vector3.zero + _localCelestials[i].vector * (LOCAL_MAP_SIZE + WORLD_TO_LOCAL_DISTANCE_SCALE);
+            g.transform.rotation = Random.rotation;
+            g.transform.localScale *= WORLD_TO_LOCAL_SIZE_SCALE;
+        }
+    }
+    void InstantiateResources()
     {
         float bufferedMapSize = (LOCAL_MAP_SIZE * .9f);
 
@@ -184,14 +218,14 @@ public class LocalMapData
     //        _localCelestials.Add(new LocalCelestial(orbit, cardinals.RandomItem()));
     //}
 }
-//public struct LocalCelestial
-//{
-//    public readonly Celestial celestial;
-//    public readonly Vector3 vector;
+public struct LocalCelestial
+{
+    public readonly Celestial celestial;
+    public readonly Vector3 vector;
 
-//    public LocalCelestial(Celestial celestial, Vector3 vector)
-//    {
-//        this.celestial = celestial;
-//        this.vector = vector;
-//    }
-//}
+    public LocalCelestial(Celestial celestial, Vector3 vector)
+    {
+        this.celestial = celestial;
+        this.vector = vector;
+    }
+}

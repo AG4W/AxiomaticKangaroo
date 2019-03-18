@@ -10,6 +10,10 @@ public class OverworldUIManager : MonoBehaviour
 
     [SerializeField]Transform _canvas;
 
+    [SerializeField]GameObject _currentSectorDetails;
+    [SerializeField]Text _sectorDetails;
+    [SerializeField]Text _sectorResources;
+
     [Header("World")]
     [SerializeField]GameObject _poiItem;
     List<GameObject> _poiItems = new List<GameObject>();
@@ -43,11 +47,9 @@ public class OverworldUIManager : MonoBehaviour
         GameObject item = Instantiate(_poiItem, _canvas);
 
         Text t = item.transform.Find("headerParent").GetComponentInChildren<Text>();
-
         t.text = "[" + poi.GetType().ToString() + "]: " + poi.name + " ";
 
         item.transform.Find("icon").GetComponent<Image>().sprite = ModelDB.GetIcon(poi.type);
-
         item.GetComponent<GenericTooltipHandler>()
             .Initialize(
                 () => poi.OnMouseEnter(),
@@ -58,18 +60,30 @@ public class OverworldUIManager : MonoBehaviour
 
         _poiItems.Add(item);
     }
+
     void UpdateItems()
     {
         for (int i = 0; i < RuntimeData.system.pointsOfInterest.Count; i++)
         {
-            Vector3 p = _camera.WorldToViewportPoint(RuntimeData.system.pointsOfInterest[i].cell.location);
+            Vector3 p = _camera.WorldToViewportPoint(RuntimeData.system.pointsOfInterest[i].location);
 
             _poiItems[i].SetActive(p.x > 0 && p.x < 1 && p.y > 0 && p.y < 1 && p.z > 0);
 
             if (!_poiItems[i].activeSelf)
                 continue;
 
-            _poiItems[i].transform.position = _camera.WorldToScreenPoint(RuntimeData.system.pointsOfInterest[i].cell.location);
+            _poiItems[i].transform.position = _camera.WorldToScreenPoint(RuntimeData.system.pointsOfInterest[i].location);
+        }
+    }
+
+    public void UpdateCurrentSector(Cell sector)
+    {
+        _currentSectorDetails.SetActive(sector != null);
+
+        if (_currentSectorDetails.activeSelf)
+        {
+            _sectorDetails.text = sector.GetDetails();
+            _sectorResources.text = sector.GetResources();
         }
     }
 }

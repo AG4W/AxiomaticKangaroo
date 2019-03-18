@@ -25,7 +25,7 @@ public class HexCellEntity : MonoBehaviour
 
     public void OnMouseEnter()
     {
-        TooltipManager.getInstance.OpenTooltip(_cell.GetTooltip(), Input.mousePosition);
+        OverworldUIManager.getInstance.UpdateCurrentSector(_cell);
 
         Color c = _renderer.material.color;
         c.a = .2f;
@@ -43,7 +43,7 @@ public class HexCellEntity : MonoBehaviour
     }
     public void OnMouseExit()
     {
-        TooltipManager.getInstance.CloseTooltip();
+        OverworldUIManager.getInstance.UpdateCurrentSector(null);
 
         Color c = _renderer.material.color;
         c.a = .05f;

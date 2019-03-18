@@ -69,6 +69,11 @@ public static class Extensions
         return list[Random.Range(0, list.Count)];
     }
 
+    public static float NextFloat(this System.Random random, float minimum, float maximum)
+    {
+        return (float)random.NextDouble() * (maximum - minimum) + minimum;
+    }
+
     static List<string> romanNumerals = new List<string>() { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
     static List<int> numerals = new List<int>() { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
 

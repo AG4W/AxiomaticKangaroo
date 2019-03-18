@@ -5,6 +5,7 @@ using Random = System.Random;
 public class HexGrid
 {
     int _size;
+
     GameObject _cellPrefab;
     Random _random;
 

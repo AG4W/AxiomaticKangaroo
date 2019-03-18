@@ -25,6 +25,6 @@ public class Wormhole : Celestial
 
     public override string GetTooltip()
     {
-        return (ProgressData.Evaluate(ProgressPoint.EnteredWormhole) ? "" : "A scientific anomaly.") + "\n\n" + base.GetDistanceTooltip();
+        return (ProgressData.Evaluate(ProgressPoint.EnteredWormhole) ? "" : "A scientific anomaly, perhaps worthy of a closer inspection.");
     }
 }
