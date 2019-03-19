@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 
 using Random = System.Random;
 using System.Collections.Generic;

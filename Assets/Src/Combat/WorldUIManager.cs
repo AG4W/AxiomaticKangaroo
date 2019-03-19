@@ -318,10 +318,7 @@ public class WorldUIManager : MonoBehaviour
     {
         //update time buttons
         for (int i = 0; i < _simulationSpeed.transform.childCount; i++)
-        {
-            Text t = _simulationSpeed.transform.GetChild(i).GetComponentInChildren<Text>();
-            t.color = i == (int)currentSpeed ? _simulationSpeedCurrentColor : _simulationSpeedDefaultColor;
-        }
+            _simulationSpeed.transform.GetChild(i).GetComponentInChildren<Text>().color = i == (int)currentSpeed ? _simulationSpeedCurrentColor : _simulationSpeedDefaultColor;
     }
 
     void CreateGroupItem(int index)

@@ -31,7 +31,6 @@ public static class GameManager
 
         //collect all entities
         _resources = Object.FindObjectsOfType<ResourceEntity>().ToList();
-
         _lastSpeed = SimulationSpeed.Normal;
 
         //setup ui
@@ -46,7 +45,6 @@ public static class GameManager
 
         CameraManager.getInstance.JumpTo(_ships[0].transform.position, true);
         CoroutineSurrogate.getInstance.StartCoroutine(TickAICommanders());
-        CoroutineSurrogate.getInstance.StartCoroutine(TurnTickAsync());
 
         SetSimulationSpeed(SimulationSpeed.Stopped);
     }
@@ -239,6 +237,9 @@ public static class GameManager
             ShipEntity[] ships = GetAllAI();
             ShipEntity[] player = GetSpecific(0);
 
+            if (ships.Length == 0)
+                yield return null;
+
             for (int i = 0; i < ships.Length; i++)
             {
                 //pick a target
@@ -257,27 +258,6 @@ public static class GameManager
             }
 
             yield return new WaitForSeconds(_aiTickRate);
-        }
-    }
-    static IEnumerator TurnTickAsync()
-    {
-        int turnsSinceLastIncursion = 0;
-        bool hasSpawnedFirstIncursion = false;
-
-        while (true)
-        {
-            turnsSinceLastIncursion++;
-            LogManager.getInstance.AddEntry("A day has passed.");
-
-            if (!hasSpawnedFirstIncursion || turnsSinceLastIncursion > 0 && Random.Range(0f, 100f) <= (_incursionChance + turnsSinceLastIncursion) * DifficultyUtils.GetModifier(RuntimeData.save.data.difficulty))
-            {
-                GenerateIncursion();
-
-                turnsSinceLastIncursion = 0;
-                hasSpawnedFirstIncursion = true;
-            }
-            
-            yield return new WaitForSeconds(_turnTimeInMinutes * 60);
         }
     }
 }

@@ -44,7 +44,7 @@ public static class RuntimeData
     static void OnNewSystem()
     {
         if (PlayerData.fleet == null)
-            PlayerData.Initialize(_system.grid.GetRandom());
+            PlayerData.Initialize(HexGrid.GetRandom());
 
         _location = null;
     }

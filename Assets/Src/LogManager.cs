@@ -51,15 +51,15 @@ public class LogManager : MonoBehaviour
 
     IEnumerator UpdateEntryAsync(GameObject entry, Text text, float lifetime)
     {
-        Color c = text.color;
-        float a = c.a;
+        //Color c = text.color;
+        //float a = c.a;
         float t = 0f;
 
         while (t <= lifetime)
         {
             t += Time.deltaTime;
-            c.a = Mathf.Lerp(a, 0f, t / lifetime);
-            text.color = c;
+            //c.a = Mathf.Lerp(a, 0f, t / lifetime);
+            //text.color = c;
             yield return null;
         }
 

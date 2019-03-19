@@ -23,7 +23,7 @@ public class LocalMapData
     Celestial _orbital;
 
     List<LocalCelestial> _localCelestials = new List<LocalCelestial>();
-    List<Fleet> _localFleets = new List<Fleet>();
+    List<Fleet> _fleets = new List<Fleet>();
 
     bool _playerKnowsAboutEnemy = false;
 
@@ -34,7 +34,7 @@ public class LocalMapData
 
     public Vector3 center { get { return _center; } }
 
-    public List<Fleet> fleets { get { return _localFleets; } }
+    public List<Fleet> fleets { get { return _fleets; } }
     
     public bool playerKnowsAboutEnemy { get { return _playerKnowsAboutEnemy; } }
     public bool hasResources
@@ -77,9 +77,11 @@ public class LocalMapData
     {
         _localCelestials.Remove(_localCelestials.FirstOrDefault(lc => lc.celestial == c));
     }
-    public void AddFleet(Fleet fleet)
+
+    public void SetFleets(List<Fleet> fleets)
     {
-        _localFleets.Add(fleet);
+        _fleets.Clear();
+        _fleets.AddRange(fleets);
     }
 
     //void GenerateCelestials()

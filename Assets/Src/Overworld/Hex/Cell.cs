@@ -23,7 +23,7 @@ public class Cell
     };
 
     List<PointOfInterest> _pois = new List<PointOfInterest>();
-    List<Fleet> _occupants = new List<Fleet>();
+    List<Fleet> _fleets = new List<Fleet>();
 
     LocalMapData _localMapData;
     Vector3 _location;
@@ -81,25 +81,25 @@ public class Cell
     public void Occupy(Fleet fleet)
     {
         _isOccupied = true;
-        _occupants.Add(fleet);
+        _pois.Add(fleet);
+        _fleets.Add(fleet);
 
         OnStatusChanged?.Invoke(_isOccupied);
     }
     public void Enter()
     {
         //clear old
-        _localMapData.fleets.Clear();
-
-        for (int i = 0; i < _occupants.Count; i++)
-            _localMapData.AddFleet(_occupants[i]);
+        _localMapData.SetFleets(_fleets);
 
         RuntimeData.SetLocalMapData(_localMapData);
+        HexGrid.Enter();
         SceneManager.LoadScene("LocalMap");
     }
     public void Leave(Fleet fleet)
     {
         _isOccupied = false;
-        _occupants.Remove(fleet);
+        _pois.Remove(fleet);
+        _fleets.Remove(fleet);
 
         OnStatusChanged?.Invoke(_isOccupied);
     }

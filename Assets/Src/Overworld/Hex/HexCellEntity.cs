@@ -21,6 +21,8 @@ public class HexCellEntity : MonoBehaviour
     {
         _cell = cell;
         _cell.OnStatusChanged += OnStatusChanged;
+
+        HexGrid.OnEnter += OnEnter;
     }
 
     public void OnMouseEnter()
@@ -54,5 +56,11 @@ public class HexCellEntity : MonoBehaviour
     void OnStatusChanged(bool isOccupied)
     {
         _renderer.material.color = isOccupied ? _occupyColor : _color;
+    }
+    void OnEnter()
+    {
+        _cell.OnStatusChanged -= OnStatusChanged;
+
+        HexGrid.OnEnter -= OnEnter;
     }
 }

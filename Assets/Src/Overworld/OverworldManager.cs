@@ -119,7 +119,7 @@ public static class OverworldManager
 
         Fleet ef = new Fleet(
             "<color=red>" + efn + "</color>",
-            RuntimeData.system.grid.GetRandom(),
+            HexGrid.GetRandom(),
             new Random(RuntimeData.system.seed),
             1,
             ships);

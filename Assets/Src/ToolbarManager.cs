@@ -26,6 +26,10 @@ public class ToolbarManager : MonoBehaviour
 
         PlayerData.fleet.OnVitalChanged += UpdateResourceItem;
     }
+    void OnDisable()
+    {
+        PlayerData.fleet.OnVitalChanged -= UpdateResourceItem;
+    }
 
     void InitializeButtons()
     {

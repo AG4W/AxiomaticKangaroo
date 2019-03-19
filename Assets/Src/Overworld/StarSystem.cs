@@ -18,7 +18,6 @@ public class StarSystem
     int _seed;
 
     Random _random;
-    HexGrid _grid;
 
     Star _star;
 
@@ -35,7 +34,6 @@ public class StarSystem
     public int seed { get { return _seed; } }
     public int size { get { return _size; } }
 
-    public HexGrid grid { get { return _grid; } }
     public Star star { get { return _star; } }
 
     public List<Stargate> stargates { get { return _stargates; } }
@@ -59,7 +57,7 @@ public class StarSystem
 
     public void Generate()
     {
-        _grid = new HexGrid(_size, _random);
+        HexGrid.Initialize(_size, _random);
 
         GenerateStar();
         GenerateWormholes();
@@ -73,7 +71,7 @@ public class StarSystem
         //generate star, always at 0,random?, 0 
         _star = new Star(
             NameGenerator.GetPOIName(PointOfInterestType.Star),
-           _grid.Get(_size / 2, _size / 2),
+            HexGrid.Get(_size / 2, _size / 2),
             _random);
 
         _celestials.Add(_star);
@@ -87,7 +85,7 @@ public class StarSystem
         {
             Stargate s = new Stargate(
                 "Stargate",
-                _grid.GetRandom(),
+                HexGrid.GetRandom(),
                 _random);
 
             _stargates.Add(s);
@@ -102,7 +100,7 @@ public class StarSystem
         {
             Nebula n = new Nebula(
                 "Gas Clouds",
-                _grid.GetRandom(),
+                HexGrid.GetRandom(),
                 _random);
 
             _nebulas.Add(n);
@@ -117,7 +115,7 @@ public class StarSystem
         {
             Wormhole w = new Wormhole(
                 "Uncharted Wormhole",
-                _grid.GetRandom(),
+                HexGrid.GetRandom(),
                 _random);
 
             _wormholes.Add(w);
@@ -148,7 +146,7 @@ public class StarSystem
 
             Planet p = new Planet(
                 _star.name + " " + (i + 1).ToRomanNumeral(),
-                _grid.GetRandom(),
+                HexGrid.GetRandom(),
                 _random, 
                 pt);
 
@@ -170,7 +168,7 @@ public class StarSystem
 
             Structure os = new Structure(
                 Structure.FormatName(m),
-                _grid.GetRandom(),
+                HexGrid.GetRandom(),
                 _random,
                 m);
 
@@ -181,7 +179,7 @@ public class StarSystem
 
     public void Instantiate()
     {
-        _grid.Instantiate();
+        HexGrid.Instantiate();
 
         for (int i = 0; i < _pointsOfInterest.Count; i++)
             _pointsOfInterest[i].Instantiate();
