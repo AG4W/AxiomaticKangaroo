@@ -60,7 +60,5 @@ public class HexCellEntity : MonoBehaviour
     void OnEnter()
     {
         _cell.OnStatusChanged -= OnStatusChanged;
-
-        HexGrid.OnEnter -= OnEnter;
     }
 }

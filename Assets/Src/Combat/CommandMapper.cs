@@ -292,18 +292,6 @@ public static class CommandMapper
     }
     #endregion
     #region Game Management
-    public static void IncrementSimulationSpeed()
-    {
-        GameManager.IncrementSimulationSpeed();
-    }
-    public static void DecrementSimulationSpeed()
-    {
-        GameManager.DecrementSimulationSpeed();
-    }
-    public static void ToggleSimulation()
-    {
-        GameManager.ToggleSimulation();
-    }
     public static void SetSimulationSpeed(SimulationSpeed speed)
     {
         GameManager.SetSimulationSpeed(speed);
@@ -361,22 +349,10 @@ public static class CommandMapper
     {
         AlignmentPlane.Set(y);
     }
-    public static void ToggleAlignmentPlane()
-    {
-        AlignmentPlane.Toggle();
-    }
     #endregion
 
     public delegate void GroupEvent(int index);
     public static GroupEvent OnGroupCreated;
     public static GroupEvent OnGroupSelected;
     public static GroupEvent OnGroupRemoved;
-}
-public enum SpeedSetting
-{
-    Full,
-    ThreeQuarters,
-    Half,
-    Silent,
-    Match
 }

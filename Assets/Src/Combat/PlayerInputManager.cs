@@ -50,11 +50,11 @@ public class PlayerInputManager : MonoBehaviour
         _controlModifier = Input.GetKey(KeyCode.LeftControl);
 
         if (Input.GetKeyDown(KeyCode.KeypadPlus))
-            CommandMapper.IncrementSimulationSpeed();
+            Event.Raise(ActionEvent.IncreaseSimulationSpeed);
         else if (Input.GetKeyDown(KeyCode.KeypadMinus))
-            CommandMapper.DecrementSimulationSpeed();
+            Event.Raise(ActionEvent.DecreaseSimulationSpeed);
         else if (Input.GetKeyDown(KeyCode.Space))
-            CommandMapper.ToggleSimulation();
+            Event.Raise(ActionEvent.ToggleSimulation);
 
         //48 <-> 57 == 0 - 9
         for (int i = 0; i < _alphaKeys.Length; i++)
@@ -69,7 +69,7 @@ public class PlayerInputManager : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))
-            CommandMapper.ToggleAlignmentPlane();
+            Event.Raise(ActionEvent.ToggleAlignmentPlane);
 
         if (EventSystem.current.IsPointerOverGameObject())
             return;

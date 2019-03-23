@@ -19,7 +19,7 @@ public class Stargate : PointOfInterest
     //need to generate new system at instnatiate so it doesnt inf. loop.
     public override GameObject Instantiate()
     {
-        GenerateSystem();
+        //GenerateSystem();
         return base.Instantiate();
     }
 

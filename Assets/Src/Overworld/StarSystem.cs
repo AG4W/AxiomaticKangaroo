@@ -183,8 +183,6 @@ public class StarSystem
 
         for (int i = 0; i < _pointsOfInterest.Count; i++)
             _pointsOfInterest[i].Instantiate();
-
-        //CreateOrbitalLines();
     }
     void CreateOrbitalLines()
     {

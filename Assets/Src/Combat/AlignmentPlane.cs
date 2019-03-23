@@ -17,6 +17,8 @@ public static class AlignmentPlane
         _plane = GameObject.Find("alignmentPlane");
         _size = RuntimeData.localMapData.size * 2;
 
+        Event.Subscribe(ActionEvent.ToggleAlignmentPlane, Toggle);
+
         SetSize();
     }
 
@@ -46,7 +48,7 @@ public static class AlignmentPlane
         _plane.transform.position = position;
     }
 
-    public static void Toggle()
+    static void Toggle()
     {
         for (int i = 0; i < _plane.transform.childCount; i++)
         {

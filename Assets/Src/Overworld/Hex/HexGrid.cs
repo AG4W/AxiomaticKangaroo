@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+using System.Collections.Generic;
 using Random = System.Random;
 
 public static class HexGrid
@@ -10,6 +11,7 @@ public static class HexGrid
     static Random _random;
 
     static Cell[,] _cells;
+    static List<GameObject> _entities;
 
     public static void Initialize(int size, Random random)
     {
@@ -17,8 +19,11 @@ public static class HexGrid
         _size = size;
         _cellPrefab = Resources.Load<GameObject>("cell");
         _cells = new Cell[_size, _size];
+        _entities = new List<GameObject>();
 
         _random = random;
+
+        Debug.Log(_size);
 
         Create();
     }
@@ -62,11 +67,17 @@ public static class HexGrid
         GameObject g = Object.Instantiate(_cellPrefab, cell.ToWorld(), Quaternion.identity, null);
         g.name = "Cell [" + cell.column + ", " + cell.row + "]";
         g.GetComponent<HexCellEntity>().Initialize(cell);
+
+        _entities.Add(g);
     }
 
     public static void Enter()
     {
+        for (int i = 0; i < _entities.Count; i++)
+            Object.Destroy(_entities[i]);
+
         OnEnter?.Invoke();
+        OnEnter = null;
     }
 
     public delegate void CleanUpEvent();

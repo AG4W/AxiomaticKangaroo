@@ -23,6 +23,11 @@ public static class GameManager
 
     public static void Initialize()
     {
+        //register events
+        Event.Subscribe(ActionEvent.IncreaseSimulationSpeed, IncrementSimulationSpeed);
+        Event.Subscribe(ActionEvent.DecreaseSimulationSpeed, DecrementSimulationSpeed);
+        Event.Subscribe(ActionEvent.ToggleSimulation, ToggleSimulation);
+
         //setup location
         RuntimeData.localMapData.Instantiate();
 
@@ -46,24 +51,26 @@ public static class GameManager
         CameraManager.getInstance.JumpTo(_ships[0].transform.position, true);
         CoroutineSurrogate.getInstance.StartCoroutine(TickAICommanders());
 
+        GenerateIncursion();
+
         SetSimulationSpeed(SimulationSpeed.Stopped);
     }
 
-    public static void IncrementSimulationSpeed()
+    static void IncrementSimulationSpeed()
     {
         if (_simulationSpeed == SimulationSpeed.Fastest)
             return;
 
         SetSimulationSpeed(_simulationSpeed + 1);
     }
-    public static void DecrementSimulationSpeed()
+    static void DecrementSimulationSpeed()
     {
         if (_simulationSpeed == SimulationSpeed.Slow)
             return;
 
         SetSimulationSpeed(_simulationSpeed - 1);
     }
-    public static void ToggleSimulation()
+    static void ToggleSimulation()
     {
         if (_simulationSpeed == SimulationSpeed.Stopped)
         {
@@ -215,14 +222,17 @@ public static class GameManager
     public static void Leave()
     {
         SetSimulationSpeed(SimulationSpeed.Normal);
-        OnLeave?.Invoke();
+
+        Event.Unsubscribe(ActionEvent.IncreaseSimulationSpeed, IncrementSimulationSpeed);
+        Event.Unsubscribe(ActionEvent.DecreaseSimulationSpeed, DecrementSimulationSpeed);
+        Event.Unsubscribe(ActionEvent.ToggleSimulation, ToggleSimulation);
+
+        Event.Raise(ActionEvent.LeaveLocalMap);
         SceneManager.LoadSceneAsync("Overworld");
     }
 
     public delegate void GameStatusChangedEvent(bool safeToLeave);
     public static GameStatusChangedEvent OnGameStatusUpdated;
-    public delegate void OnLeaveEvent();
-    public static OnLeaveEvent OnLeave;
 
     public delegate void ShipDestroyedEvent(ShipEntity s);
     public static ShipDestroyedEvent OnShipDestroyed;

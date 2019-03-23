@@ -83,7 +83,8 @@ public class WorldUIManager : MonoBehaviour
 
         GameManager.OnSimulationSpeedChanged += OnSimulationSpeedChanged;
         GameManager.OnGameStatusUpdated += UpdateExitButton;
-        GameManager.OnLeave += OnLeave;
+
+        Event.Subscribe(ActionEvent.LeaveLocalMap, OnLeave);
     }
 
     void InitializeSpeedControls()
@@ -469,8 +470,10 @@ public class WorldUIManager : MonoBehaviour
         CommandMapper.OnGroupCreated -= CreateGroupItem;
         CommandMapper.OnGroupRemoved -= RemoveGroupItem;
 
+        GameManager.OnSimulationSpeedChanged -= OnSimulationSpeedChanged;
         GameManager.OnGameStatusUpdated -= UpdateExitButton;
-        GameManager.OnLeave -= OnLeave;
+
+        Event.Unsubscribe(ActionEvent.LeaveLocalMap, OnLeave);
     }
 
     IEnumerator UpdateCooldownUI(ShipComponent component, Image image)

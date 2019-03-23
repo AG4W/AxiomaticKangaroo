@@ -43,7 +43,10 @@ public class ToolbarManager : MonoBehaviour
                 if (ManagementUIManager.getInstance.isOpen)
                     ManagementUIManager.getInstance.CloseManagementWindow();
                 else
+                {
+                    CrewUIManager.getInstance.Close();
                     ManagementUIManager.getInstance.OpenManagementWindow();
+                }
             },
             null,
             null,
@@ -64,7 +67,16 @@ public class ToolbarManager : MonoBehaviour
 
         cmb.GetComponent<GenericTooltipHandler>().Initialize(
             () => TooltipManager.getInstance.OpenTooltip("Crew.", Input.mousePosition),
-            null,
+            delegate 
+            {
+                if (CrewUIManager.getInstance.isOpen)
+                    CrewUIManager.getInstance.Close();
+                else
+                {
+                    ManagementUIManager.getInstance.CloseManagementWindow();
+                    CrewUIManager.getInstance.Open();
+                }
+            },
             null,
             null,
             () => TooltipManager.getInstance.CloseTooltip());
@@ -112,6 +124,7 @@ public class ToolbarManager : MonoBehaviour
         CreateResourceItem(FleetVitalType.Range,
             FleetVital.Format(FleetVitalType.Range) + " determines how far your fleet can move.");
     }
+
     void CreateResourceItem(FleetVitalType type, string tooltip)
     {
         FleetVital v = PlayerData.fleet.GetVital(type);

@@ -68,6 +68,8 @@ public class MainMenuManager : MonoBehaviour
         RarityDB.Initialize();
         TraitDB.Initialize();
         PaletteDB.Initialize();
+        //initalize event manager
+        Event.Initialize();
 
         //load saves first
         SaveManager.Initialize();
