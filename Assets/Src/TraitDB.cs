@@ -13,12 +13,12 @@ public static class TraitDB
 
         _traits = new Trait[]
         {
-            new Trait("Veteran Engineer Staff", "", new ShipVitalModifier[]
+            new Trait("Veteran Engineer Staff", "This officer has a veteran engineer retinue.", new ShipVitalModifier[]
             {
                 new ShipVitalModifier("Veteran Engineer Staff", .05f, ModifierMode.Percentage, VitalType.MovementSpeed),
                 new ShipVitalModifier("Veteran Engineer Staff", .05f, ModifierMode.Percentage, VitalType.RotationSpeed)
             }),
-            new Trait("Expert Scanner", "", new ShipVitalModifier[]
+            new Trait("Expert Scanner", "This person is a highly adept scan technician.", new ShipVitalModifier[]
             {
                 new ShipVitalModifier("Expert Scanner", .1f, ModifierMode.Percentage, VitalType.ScanRadius),
                 new ShipVitalModifier("Expert Scanner", .25f, ModifierMode.Percentage, VitalType.ScanRate)

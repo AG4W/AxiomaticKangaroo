@@ -27,6 +27,7 @@ public class Modifier
 
         s += "<color=" + (_value == 0f ? "yellow" : _value > 0f ? "green" : "red") + ">";
         s += (_mode == ModifierMode.Percentage ? (_value * 100f).ToString("+0.##;-0.##") : _value.ToString("+0.##;-0.##"));
+        s += "</color>";
 
         if (_mode == ModifierMode.Percentage)
             s += "%";

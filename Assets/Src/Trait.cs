@@ -1,31 +1,27 @@
 ﻿public class Trait
 {
-    string _title;
-    string _description;
+    public string title { get; private set; }
+    public string description { get; private set; }
 
-    ShipVitalModifier[] _modifiers;
-
-    public string title { get { return _title; } }
-
-    public ShipVitalModifier[] modifiers { get { return _modifiers; } }
+    public ShipVitalModifier[] modifiers { get; private set; }
 
     public Trait(string title, string description, ShipVitalModifier[] modifiers)
     {
-        _title = title;
-        _description = description;
+        this.title = title;
+        this.description = description;
 
-        _modifiers = modifiers;
+        this.modifiers = modifiers;
     }
 
     public override string ToString()
     {
         string s = "";
 
-        s += _title + "\n\n";
-        s += _description + "\n\n";
+        s += "<color=yellow>" + title + "</color>\n";
+        s += "<color=grey><i>" + description + "</i></color>\n\n";
 
-        for (int i = 0; i < _modifiers.Length; i++)
-            s += _modifiers[i].value + " " + _modifiers[i].type + (i == _modifiers.Length - 1 ? "" : "\n");
+        for (int i = 0; i < modifiers.Length; i++)
+            s += modifiers[i].ToString() + (i == modifiers.Length - 1 ? "" : "\n");
 
         return s;
     }

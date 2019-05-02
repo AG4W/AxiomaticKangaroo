@@ -109,10 +109,14 @@ public class Officer
 
         s += _rank + " " + _name + "\n\n";
         s += "Level: " + _level + "\n";
-        s += "Assignment: " + (_assignment == null ? "<color=green>Available</color>" : "<color=yellow>" + _assignment.name + "</color>\n");
+        s += "Assignment: " + (_assignment == null ? "<color=green>Available" : "<color=yellow>" + _assignment.name) + "</color>\n\n";
+        s += "Traits:\n";
 
-        for (int i = 0; i < _traits.Count; i++)
-            s += _traits[i].ToString() + "\n";
+        if (_traits.Count != 0)
+            for (int i = 0; i < _traits.Count; i++)
+                s += _traits[i].ToString() + (i == traits.Count - 1 ? "" : "\n");
+        else
+            s += "None.";
 
         return s;
     }

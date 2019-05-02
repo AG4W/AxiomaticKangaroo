@@ -57,7 +57,7 @@ public class Star : Celestial
         l.range = 10000;
         l.intensity = 100000f;
         l.bounceIntensity = 1f;
-        l.lightmapBakeType = LightmapBakeType.Mixed;
+        //l.lightmapBakeType = LightmapBakeType.Mixed;
         l.shadows = LightShadows.None;
         //model.GetComponentInChildren<Light>().color = _emission;
     }
