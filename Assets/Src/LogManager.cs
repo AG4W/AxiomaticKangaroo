@@ -5,19 +5,18 @@ using System.Collections;
 
 public class LogManager : MonoBehaviour
 {
-    static LogManager _instance;
-    public static LogManager getInstance { get { return _instance; } }
+    public static LogManager getInstance { get; private set; }
 
     [SerializeField]GameObject _log;
     [SerializeField]GameObject _logItem;
 
     void Awake()
     {
-        if (_instance != null)
+        if (getInstance != null)
             Destroy(this.transform.root.gameObject);
         else
         {
-            _instance = this;
+            getInstance = this;
             DontDestroyOnLoad(this.transform.root);
         }
     }

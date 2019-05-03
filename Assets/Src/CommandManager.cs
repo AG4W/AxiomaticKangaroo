@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine.SceneManagement;
 
 using Random = UnityEngine.Random;
 using System.Text.RegularExpressions;
@@ -73,7 +72,7 @@ public static class CommandManager
                 break;
 
             default:
-                Debug.Log("Unknown command: " + command);
+                ConsoleManager.Print("<color=red>Unknown Command</color> >> " + parts[0] + " :(");
                 break;
         }
     }
@@ -83,12 +82,18 @@ public static class CommandManager
         switch (parts[1])
         {
             case "overworld":
+                ConsoleManager.Print("Loading overworld.");
+
+                if (SceneManager.GetActiveScene().name == "Main")
+                    ConsoleManager.Print("<color=red>Warning</color>: Loading overworld from main menu will break the game.");
+
                 SceneManager.LoadScene("Overworld");
                 break;
             case "event":
                 LoadEvent(parts);
                 break;
             default:
+                ConsoleManager.Print("<color=red>" + parts[1] + " is not a valid scene/event.</color>");
                 break;
         }
     }
@@ -103,12 +108,16 @@ public static class CommandManager
             de = EventDB.GetByName(parts[2]);
 
         if (de != null)
+        {
+            ConsoleManager.Print("Loading event " + de.name);
             DialogueUIManager.getInstance.DisplayDialogueEvent(de);
+        }
         else
-            Debug.LogWarning("Event not found!");
+            ConsoleManager.Print("<color=red>Event " + parts[2] + " does not exist.</color>");
     }
     static void GenerateNewSystem()
     {
+        ConsoleManager.Print("Generating new system.");
         RuntimeData.GenerateNewSystem();
     }
 
@@ -133,7 +142,7 @@ public static class CommandManager
                 break;
 
             default:
-                Debug.Log("Unknown command");
+                ConsoleManager.Print("<color=red>Unknown Command</color> >> " + parts[0] + " :(");
                 break;
         }
     }
@@ -153,6 +162,7 @@ public static class CommandManager
     }
     static void ModifyProgress(string[] parts)
     {
+        ConsoleManager.Print("Setting " + (ProgressPoint)Enum.Parse(typeof(ProgressPoint), parts[2], true) + " to " + bool.Parse(parts[3]));
         ProgressData.Set((ProgressPoint)Enum.Parse(typeof(ProgressPoint), parts[2], true), bool.Parse(parts[3]));
     }
 
