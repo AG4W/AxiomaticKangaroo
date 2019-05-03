@@ -24,7 +24,7 @@ public class Planet : Celestial
 
     public bool isTerrestrial { get { return _planetType == PlanetType.Terrestrial; } }
 
-    public Planet(string name, Cell cell, Random random, PlanetType planetType) : base(name, cell, random)
+    public Planet(string name, Vector3 position, Random random, PlanetType planetType) : base(name, position, random)
     {
         base.type = PointOfInterestType.Planet;
         base.model = ModelDB.GetPlanet(planetType, random);

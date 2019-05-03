@@ -162,7 +162,7 @@ public class PlayerInputManager : MonoBehaviour
         RaycastHit hit;
         Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
 
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, (1 << 31)))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << 31))
             return hit.point;
 
         return Vector3.zero;

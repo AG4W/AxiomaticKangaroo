@@ -58,10 +58,8 @@ public class OverworldCameraManager : MonoBehaviour
 
         _jigTargetPosition += (moveDirection * (_offsetIndex + 1));
 
-        float s = (RuntimeData.system.size * HexMetrics.size) * 2;
-
-        _jigTargetPosition.x = Mathf.Clamp(_jigTargetPosition.x, 0, s);
-        _jigTargetPosition.z = Mathf.Clamp(_jigTargetPosition.z, 0, s);
+        _jigTargetPosition.x = Mathf.Clamp(_jigTargetPosition.x, 0, RuntimeData.system.size * 2);
+        _jigTargetPosition.z = Mathf.Clamp(_jigTargetPosition.z, 0, RuntimeData.system.size * 2);
     }
     void UpdateCameraOffset()
     {

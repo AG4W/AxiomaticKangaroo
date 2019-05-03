@@ -3,17 +3,17 @@ using System.Collections.Generic;
 
 public static class Event
 {
-    static List<Action>[] _actionEvents;
+    static List<Action<object[]>>[] _actionEvents;
 
     public static void Initialize()
     {
-        _actionEvents = new List<Action>[Enum.GetNames(typeof(ActionEvent)).Length];
+        _actionEvents = new List<Action<object[]>>[Enum.GetNames(typeof(ActionEvent)).Length];
 
         for (int i = 0; i < _actionEvents.Length; i++)
-            _actionEvents[i] = new List<Action>();
+            _actionEvents[i] = new List<Action<object[]>>();
     }
 
-    public static void Subscribe(ActionEvent e, Action a)
+    public static void Subscribe(ActionEvent e, Action<object[]> a)
     {
 #if UNITY_EDITOR
         if (a == null)
@@ -21,15 +21,15 @@ public static class Event
 #endif
         _actionEvents[(int)e].Add(a);
     }
-    public static void Unsubscribe(ActionEvent e, Action a)
+    public static void Unsubscribe(ActionEvent e, Action<object[]> a)
     {
         _actionEvents[(int)e].Remove(a);
     }
 
-    public static void Raise(ActionEvent e)
+    public static void Raise(ActionEvent e, params object[] args)
     {
         for (int i = 0; i < _actionEvents[(int)e].Count; i++)
-            _actionEvents[(int)e][i]?.Invoke();
+            _actionEvents[(int)e][i]?.Invoke(args);
     }
 }
 public enum ActionEvent

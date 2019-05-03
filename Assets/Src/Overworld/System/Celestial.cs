@@ -4,7 +4,7 @@ using Random = System.Random;
 
 public class Celestial : PointOfInterest
 {
-    public Celestial(string name, Cell cell, Random random) : base(name, cell, random)
+    public Celestial(string name, Vector3 position, Random random) : base(name, position, random)
     {
     }
 

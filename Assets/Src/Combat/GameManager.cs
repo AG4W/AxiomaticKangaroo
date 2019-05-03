@@ -24,9 +24,9 @@ public static class GameManager
     public static void Initialize()
     {
         //register events
-        Event.Subscribe(ActionEvent.IncreaseSimulationSpeed, IncrementSimulationSpeed);
-        Event.Subscribe(ActionEvent.DecreaseSimulationSpeed, DecrementSimulationSpeed);
-        Event.Subscribe(ActionEvent.ToggleSimulation, ToggleSimulation);
+        Event.Subscribe(ActionEvent.IncreaseSimulationSpeed, (object[] args) => IncrementSimulationSpeed());
+        Event.Subscribe(ActionEvent.DecreaseSimulationSpeed, (object[] args) => DecrementSimulationSpeed());
+        Event.Subscribe(ActionEvent.ToggleSimulation, (object[] args) => ToggleSimulation());
 
         //setup location
         RuntimeData.localMapData.Instantiate();
@@ -222,10 +222,6 @@ public static class GameManager
     public static void Leave()
     {
         SetSimulationSpeed(SimulationSpeed.Normal);
-
-        Event.Unsubscribe(ActionEvent.IncreaseSimulationSpeed, IncrementSimulationSpeed);
-        Event.Unsubscribe(ActionEvent.DecreaseSimulationSpeed, DecrementSimulationSpeed);
-        Event.Unsubscribe(ActionEvent.ToggleSimulation, ToggleSimulation);
 
         Event.Raise(ActionEvent.LeaveLocalMap);
         SceneManager.LoadSceneAsync("Overworld");

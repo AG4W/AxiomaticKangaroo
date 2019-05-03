@@ -17,7 +17,7 @@ public static class AlignmentPlane
         _plane = GameObject.Find("alignmentPlane");
         _size = RuntimeData.localMapData.size * 2;
 
-        Event.Subscribe(ActionEvent.ToggleAlignmentPlane, Toggle);
+        Event.Subscribe(ActionEvent.ToggleAlignmentPlane, (object[] args) => Toggle());
 
         SetSize();
     }

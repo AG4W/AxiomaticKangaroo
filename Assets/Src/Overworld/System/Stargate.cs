@@ -9,7 +9,7 @@ public class Stargate : PointOfInterest
 
     StarSystem _system;
 
-    public Stargate(string name, Cell cell, Random random) : base(name, cell, random)
+    public Stargate(string name, Vector3 position, Random random) : base(name, position, random)
     {
         base.type = PointOfInterestType.Wormhole;
 
@@ -19,7 +19,7 @@ public class Stargate : PointOfInterest
     //need to generate new system at instnatiate so it doesnt inf. loop.
     public override GameObject Instantiate()
     {
-        //GenerateSystem();
+        GenerateSystem();
         return base.Instantiate();
     }
 
@@ -51,22 +51,11 @@ public class Stargate : PointOfInterest
 
         s += (primitiveDataAvailable ? _system.planets.Count.ToString() : "?") + " planet(s).\n";
         s += (primitiveDataAvailable ? _system.stargates.Count.ToString() : "?") + " stargate(s).\n";
-        s += (primitiveDataAvailable ? _system.structures.Count.ToString() : "?") + " structure(s).\n";
         s += (primitiveDataAvailable ? _system.wormholes.Count.ToString() : "?") + " wormhole(s).\n";
         s += "\n";
 
         if (advancedDataAvailable)
         {
-            if(_system.structures.Count > 0)
-            {
-                s += "[Structures]:\n";
-
-                for (int i = 0; i < _system.structures.Count; i++)
-                    s += _system.structures[i].name + ".\n";
-
-                s += "\n";
-            }
-
             s += "? fleets.\n";
             s += "\n";
         }

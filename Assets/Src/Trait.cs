@@ -5,7 +5,7 @@
 
     public ShipVitalModifier[] modifiers { get; private set; }
 
-    public Trait(string title, string description, ShipVitalModifier[] modifiers)
+    public Trait(string title, string description, params ShipVitalModifier[] modifiers)
     {
         this.title = title;
         this.description = description;

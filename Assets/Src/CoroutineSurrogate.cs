@@ -2,11 +2,10 @@
 
 public class CoroutineSurrogate : MonoBehaviour
 {
-    static CoroutineSurrogate _instance;
-    public static CoroutineSurrogate getInstance { get { return _instance; } }
+    public static CoroutineSurrogate getInstance { get; private set; }
 
     void Awake()
     {
-        _instance = this;
+        getInstance = this;
     }
 }

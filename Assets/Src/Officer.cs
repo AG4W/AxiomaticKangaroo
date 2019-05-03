@@ -40,7 +40,14 @@ public class Officer
 
         _portrait = ModelDB.GetPortrait();
         _traits = new List<Trait>();
-        _traits.Add(TraitDB.GetRandom());
+
+        while (_traits.Count < UnityEngine.Random.Range(1, 3))
+        {
+            Trait t = TraitDB.GetRandom();
+
+            if (!_traits.Contains(t))
+                _traits.Add(t);
+        }
     }
     public Officer(string name, string homeplanet, Sprite portrait, Rank rank, Gender gender)
     {
@@ -57,7 +64,6 @@ public class Officer
     {
         _assignment = ship;
     }
-
     public void IncrementLevel()
     {
         if (_rank == (Rank)Enum.GetNames(typeof(Rank)).Length - 1)
@@ -101,22 +107,19 @@ public class Officer
         return
             _rank + " " + _name + "\n" +
             "Level: " + _level + "\n" +
-            "Assignment: " + (_assignment == null ? "<color=green>Available</color>" : "<color=yellow>" + _assignment.name + "</color>");
+            "Assignment: " + (_assignment == null ? "<color=green>Available" : "<color=yellow><i>" + _assignment.name + "</i>") + "</color>";
     }
     public string GetSummary()
     {
         string s = "";
-
+    
         s += _rank + " " + _name + "\n\n";
         s += "Level: " + _level + "\n";
-        s += "Assignment: " + (_assignment == null ? "<color=green>Available" : "<color=yellow>" + _assignment.name) + "</color>\n\n";
-        s += "Traits:\n";
+        s += "Assignment: " + (_assignment == null ? "<color=green>Available" : "<color=yellow><i>" + _assignment.name + "</i>") + "</color>\n\n";
 
         if (_traits.Count != 0)
             for (int i = 0; i < _traits.Count; i++)
-                s += _traits[i].ToString() + (i == traits.Count - 1 ? "" : "\n");
-        else
-            s += "None.";
+                s += _traits[i].ToString() + (i == traits.Count - 1 ? "" : "\n\n");
 
         return s;
     }

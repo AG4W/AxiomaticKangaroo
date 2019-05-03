@@ -80,6 +80,7 @@ public class ProjectileWeapon : Weapon
         //clamp to sane values, all shots have a .5% to hit, atleast.
         fa = Mathf.Clamp(fa, .5f, 100f);
 
+#if UNITY_EDITOR
         if (shooter.teamID == 0)
             Debug.Log(shooter.name + " fired!\n" +
                 "Unmodified Accuracy: " + _accuracy * 100f + "%\n" +
@@ -87,6 +88,7 @@ public class ProjectileWeapon : Weapon
                 "Tracking Penalty: " + (target.GetVital(VitalType.MovementSpeed).current * _trackingModifier).ToString() + "%\n" +
                 "Distance Penalty: " + ((Vector3.Distance(target.transform.position, shooter.transform.position) / base.range) * _falloff).ToString() + "%\n" +
                 "Final Accuracy: " + fa + "%");
+#endif
 
         CoroutineSurrogate.getInstance.StartCoroutine(
             MoveProjectile(

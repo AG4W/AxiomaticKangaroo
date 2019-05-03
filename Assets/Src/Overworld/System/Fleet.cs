@@ -6,22 +6,18 @@ using System.Linq;
 
 public class Fleet : PointOfInterest
 {
-    string _name;
-
-    int _teamID;
-
-    List<Ship> _ships;
     FleetVital[] _vitals;
 
-    public int teamID { get { return _teamID; } }
+    public int teamID { get; private set; }
 
-    public List<Ship> ships { get { return _ships; } }
+    public List<Ship> ships { get; private set; }
 
-    public Fleet(string name, Cell cell, Random random, int teamID, List<Ship> ships) : base(name, cell, random)
+    public Fleet(string name, Vector3 position, Random random, int teamID, List<Ship> ships) : base(name, position, random)
     {
-        _name = name;
-        _teamID = teamID;
-        _ships = ships;
+        this.name = name;
+
+        this.teamID = teamID;
+        this.ships = ships;
 
         for (int i = 0; i < ships.Count; i++)
             ships[i].OnStatsUpdated += UpdateVitals;
@@ -40,48 +36,40 @@ public class Fleet : PointOfInterest
 
     public override void OnLeftClick()
     {
-        if (_teamID == 0)
+        if (teamID == 0)
             return;
 
         base.OnLeftClick();
     }
 
-    public override void Move(Cell cell, float moveTime = 1)
+    public override void Move(Vector3 position, float speed = 200)
     {
-        float distance = base.cell.Distance(cell);
+        float distance = Vector3.Distance(base.position, position);
 
         //not enough movepoints
         if(distance > GetVital(FleetVitalType.Range).current)
         {
-            Debug.Log("Too far away!");
-            return;
-        }
-        if (GetVital(FleetVitalType.ProcessedFuel).current <= cell.travelCosts[0])
-        {
-            Debug.Log("Not enough fuel!");
-            return;
-        }
+            GetVital(FleetVitalType.Range).Set(0f);
+            base.Move(Vector3.Lerp(base.position, position, GetVital(FleetVitalType.Range).current / distance), speed);
 
-        GetVital(FleetVitalType.Range).Update(-distance);
-        GetVital(FleetVitalType.ProcessedFuel).Update(cell.travelCosts[0]);
-        GetVital(FleetVitalType.CivilianGoods).Update(cell.travelCosts[1]);
-
-        cell.Occupy(this);
-
-        base.cell.Leave(this);
-        base.Move(cell, moveTime);
-
-        if (GetVital(FleetVitalType.Range).current <= 0)
             OverworldManager.EndCurrentTurn();
+        }
+        else
+        {
+            GetVital(FleetVitalType.Range).Update(-distance);
+            base.Move(position, speed);
+
+            if (GetVital(FleetVitalType.Range).current <= 0)
+                OverworldManager.EndCurrentTurn();
+        }
     }
 
     public void AddShip(Ship s)
     {
         s.OnStatsUpdated += UpdateVitals;
+        ships.Add(s);
 
-        _ships.Add(s);
-
-        if(_teamID == 0)
+        if(teamID == 0)
         {
             if(s.officer != null)
                 PlayerData.officers.Add(s.officer);
@@ -95,10 +83,9 @@ public class Fleet : PointOfInterest
     public void RemoveShip(Ship s)
     {
         s.OnStatsUpdated -= UpdateVitals;
+        ships.Remove(s);
 
-        _ships.Remove(s);
-
-        if(_teamID == 0)
+        if(teamID == 0)
         {
             PlayerData.officers.Remove(s.officer);
 
@@ -137,15 +124,15 @@ public class Fleet : PointOfInterest
     }
     void UpdateVitals()
     {
-        Ship slowestShip = _ships.OrderBy(s => s.GetVital(VitalType.MovementSpeed)).FirstOrDefault();
+        Ship slowestShip = ships.OrderBy(s => s.GetVital(VitalType.MovementSpeed)).FirstOrDefault();
 
-        GetVital(FleetVitalType.ProcessedFuel).SetMax(_ships.Sum(s => s.GetVital(VitalType.FuelStorage)), false);
-        GetVital(FleetVitalType.Ammunition).SetMax(_ships.Sum(s => s.GetVital(VitalType.GoodsStorage)), false);
-        GetVital(FleetVitalType.CivilianGoods).SetMax(_ships.Sum(s => s.GetVital(VitalType.GoodsStorage)), false);
-        GetVital(FleetVitalType.NebulaGas).SetMax(_ships.Sum(s => s.GetVital(VitalType.GasStorage)), false);
-        GetVital(FleetVitalType.Tritanite).SetMax(_ships.Sum(s => s.GetVital(VitalType.OreStorage)), false);
-        GetVital(FleetVitalType.Veldspar).SetMax(_ships.Sum(s => s.GetVital(VitalType.OreStorage)), false);
-        GetVital(FleetVitalType.Range).SetMax(2, false);
+        GetVital(FleetVitalType.ProcessedFuel).SetMax(ships.Sum(s => s.GetVital(VitalType.FuelStorage)), false);
+        GetVital(FleetVitalType.Ammunition).SetMax(ships.Sum(s => s.GetVital(VitalType.GoodsStorage)), false);
+        GetVital(FleetVitalType.CivilianGoods).SetMax(ships.Sum(s => s.GetVital(VitalType.GoodsStorage)), false);
+        GetVital(FleetVitalType.NebulaGas).SetMax(ships.Sum(s => s.GetVital(VitalType.GasStorage)), false);
+        GetVital(FleetVitalType.Tritanite).SetMax(ships.Sum(s => s.GetVital(VitalType.OreStorage)), false);
+        GetVital(FleetVitalType.Veldspar).SetMax(ships.Sum(s => s.GetVital(VitalType.OreStorage)), false);
+        GetVital(FleetVitalType.Range).SetMax(400, false);
     }
 
     void OnVitalChange(Vital vital)
@@ -192,12 +179,12 @@ public class Fleet : PointOfInterest
     {
         string s = "";
 
-        s += _name + "\n\n";
+        s += base.name + "\n\n";
 
-        for (int i = 0; i < _ships.Count; i++)
-            s += "<i><color=yellow>" + _ships[i].name + "</color></i>, " + _ships[i].GetClass() + (i < _ships.Count - 1 ? ",\n" : ".\n\n");
+        for (int i = 0; i < ships.Count; i++)
+            s += "<i><color=yellow>" + ships[i].name + "</color></i>, " + ships[i].GetClass() + (i < ships.Count - 1 ? ",\n" : ".\n\n");
 
-        s += "Power: <color=red>" + _ships.Sum(sh => sh.weapons.Sum(w => w.dps)).ToString("#.##") + "</color>.";
+        s += "Power: <color=red>" + ships.Sum(sh => sh.weapons.Sum(w => w.dps)).ToString("#.##") + "</color>.";
 
         return s;
     }

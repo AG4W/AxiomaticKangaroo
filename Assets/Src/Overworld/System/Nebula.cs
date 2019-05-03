@@ -4,7 +4,7 @@ using Random = System.Random;
 
 public class Nebula : Celestial
 {
-    public Nebula(string name, Cell cell, Random random) : base(name, cell, random)
+    public Nebula(string name, Vector3 position, Random random) : base(name, position, random)
     {
         base.type = PointOfInterestType.Nebula;
     }

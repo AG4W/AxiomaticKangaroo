@@ -14,82 +14,62 @@ public class StarSystem
     const int MAX_PLANETS = 8;
     const int MAX_STRUCTURES = 2;
 
-    int _size;
-    int _seed;
-
     Random _random;
-
-    Star _star;
-
     List<Nebula> _nebulas = new List<Nebula>();
-    List<Stargate> _stargates = new List<Stargate>();
-    List<Structure> _structures = new List<Structure>();
-    List<Wormhole> _wormholes = new List<Wormhole>();
-    List<Planet> _planets = new List<Planet>();
-    List<Celestial> _celestials = new List<Celestial>();
 
-    List<PointOfInterest> _pointsOfInterest = new List<PointOfInterest>();
-    List<AIPlanner> _aiPlanners = new List<AIPlanner>();
+    public int seed { get; }
+    public int size { get; }
 
-    public int seed { get { return _seed; } }
-    public int size { get { return _size; } }
+    public Star star { get; private set; }
 
-    public Star star { get { return _star; } }
+    public List<Stargate> stargates { get; } = new List<Stargate>();
+    public List<Wormhole> wormholes { get; } = new List<Wormhole>();
+    public List<Planet> planets { get; } = new List<Planet>();
+    public List<Celestial> celestials { get; } = new List<Celestial>();
 
-    public List<Stargate> stargates { get { return _stargates; } }
-    public List<Structure> structures { get { return _structures; } }
-    public List<Wormhole> wormholes { get { return _wormholes; } }
-    public List<Planet> planets { get { return _planets; } }
-    public List<Celestial> celestials { get { return _celestials; } }
-
-    public List<PointOfInterest> pointsOfInterest { get { return _pointsOfInterest; } }
-    public List<AIPlanner> aiEntities { get { return _aiPlanners; } }
+    public List<PointOfInterest> pointsOfInterest { get; } = new List<PointOfInterest>();
+    public List<AIPlanner> aiEntities { get; } = new List<AIPlanner>();
 
     public StarSystem(int seed)
     {
         _random = new Random(seed);
 
-        _seed = seed;
-
-        while (_size == 0 || _size % 2 == 0)
-            _size = _random.Next(7, 15);
+        this.seed = seed;
+        this.size = _random.Next(500, 1000);
     }
 
     public void Generate()
     {
-        HexGrid.Initialize(_size, _random);
-
         GenerateStar();
         GenerateWormholes();
         GenerateNebulas();
         GenerateStargates();
         GeneratePlanets();
-        GenerateStructures();
     }
     void GenerateStar()
     {
         //generate star, always at 0,random?, 0 
-        _star = new Star(
+        star = new Star(
             NameGenerator.GetPOIName(PointOfInterestType.Star),
-            HexGrid.Get(_size / 2, _size / 2),
+            new Vector3(size / 2, 0f, size / 2),
             _random);
 
-        _celestials.Add(_star);
-        _pointsOfInterest.Add(_star);
+        celestials.Add(star);
+        pointsOfInterest.Add(star);
     }
     void GenerateStargates()
     {
-        int sgcount = _random.Next(_wormholes.Count > 0 ? 0 : 1, MAX_STARGATES);
+        int sgcount = _random.Next(wormholes.Count > 0 ? 0 : 1, MAX_STARGATES);
 
         for (int i = 0; i < sgcount; i++)
         {
             Stargate s = new Stargate(
                 "Stargate",
-                HexGrid.GetRandom(),
+                GetRandomLocation(),
                 _random);
 
-            _stargates.Add(s);
-            _pointsOfInterest.Add(s);
+            stargates.Add(s);
+            pointsOfInterest.Add(s);
         }
     }
     void GenerateNebulas()
@@ -99,12 +79,12 @@ public class StarSystem
         for (int i = 0; i < ncount; i++)
         {
             Nebula n = new Nebula(
-                "Gas Clouds",
-                HexGrid.GetRandom(),
+                "Nebula",
+                GetRandomLocation(),
                 _random);
 
             _nebulas.Add(n);
-            _pointsOfInterest.Add(n);
+            pointsOfInterest.Add(n);
         }
     }
     void GenerateWormholes()
@@ -114,12 +94,12 @@ public class StarSystem
         for (int i = 0; i < whcount; i++)
         {
             Wormhole w = new Wormhole(
-                "Uncharted Wormhole",
-                HexGrid.GetRandom(),
+                "Wormhole",
+                GetRandomLocation(),
                 _random);
 
-            _wormholes.Add(w);
-            _pointsOfInterest.Add(w);
+            wormholes.Add(w);
+            pointsOfInterest.Add(w);
         }
     }
     void GeneratePlanets()
@@ -145,99 +125,38 @@ public class StarSystem
             PlanetType pt = (PlanetType)_random.Next(0, System.Enum.GetNames(typeof(PlanetType)).Length);
 
             Planet p = new Planet(
-                _star.name + " " + (i + 1).ToRomanNumeral(),
-                HexGrid.GetRandom(),
+                star.name + "_" + (i + 1).ToRomanNumeral(),
+                GetRandomLocation(),
                 _random, 
                 pt);
 
-            _planets.Add(p);
-            _celestials.Add(p);
-            _pointsOfInterest.Add(p);
-        }
-    }
-    void GenerateStructures()
-    {
-        if (_planets.Count == 0)
-            return;
-
-        int structureCount = _random.Next(0, MAX_STRUCTURES);
-
-        for (int i = 0; i < structureCount; i++)
-        {
-            Module m = (Module)_random.Next(0, System.Enum.GetNames(typeof(Module)).Length);
-
-            Structure os = new Structure(
-                Structure.FormatName(m),
-                HexGrid.GetRandom(),
-                _random,
-                m);
-
-            _structures.Add(os);
-            _pointsOfInterest.Add(os);
+            planets.Add(p);
+            celestials.Add(p);
+            pointsOfInterest.Add(p);
         }
     }
 
     public void Instantiate()
     {
-        HexGrid.Instantiate();
-
-        for (int i = 0; i < _pointsOfInterest.Count; i++)
-            _pointsOfInterest[i].Instantiate();
-    }
-    void CreateOrbitalLines()
-    {
-        Material lrMat = Resources.Load<Material>("orbitalLineMat");
-
-        for (int i = 0; i < _planets.Count; i++)
-        {
-            GameObject g = new GameObject();
-
-            g.transform.position = Vector3.zero;
-
-            int segments = 80;
-
-            LineRenderer lr = g.AddComponent<LineRenderer>();
-            lr.material = lrMat;
-            lr.loop = true;
-            lr.useWorldSpace = true;
-            lr.positionCount = segments;
-            lr.startWidth = 1f;
-            lr.endWidth = 1f;
-
-            float angle = 20f;
-            float distance = Vector3.Distance(Vector3.zero, _planets[i].cell.location);
-
-            for (int a = 0; a < segments; a++)
-            {
-                float x;
-                float y = 0;
-                float z ;
-
-                x = Mathf.Sin(Mathf.Deg2Rad * angle) * distance;
-                z = Mathf.Cos(Mathf.Deg2Rad * angle) * distance;
-
-                lr.SetPosition(a, new Vector3(x, y, z));
-
-                angle += (360f / segments);
-            }
-        }
+        for (int i = 0; i < pointsOfInterest.Count; i++)
+            pointsOfInterest[i].Instantiate();
     }
 
     public void AddAIEntity(AIPlanner ai)
     {
-        _aiPlanners.Add(ai);
+        aiEntities.Add(ai);
     }
     public void RemoveAIEntity(AIPlanner ai)
     {
         for (int i = 0; i < ai.fleetCount; i++)
             RemovePointOfInterest(ai.fleets[i]);
 
-        _aiPlanners.Remove(ai);
+        aiEntities.Remove(ai);
     }
 
     public void AddPointOfInterest(PointOfInterest poi)
     {
-        _pointsOfInterest.Add(poi);
+        pointsOfInterest.Add(poi);
 
         poi.Instantiate();
 
@@ -245,7 +164,7 @@ public class StarSystem
     }
     public void RemovePointOfInterest(PointOfInterest poi)
     {
-        _pointsOfInterest.Remove(poi);
+        pointsOfInterest.Remove(poi);
 
         poi.Deinstantiate();
 
@@ -254,12 +173,12 @@ public class StarSystem
 
     public void RemoveFleet(Fleet fleet)
     {
-        for (int i = 0; i < _aiPlanners.Count; i++)
+        for (int i = 0; i < aiEntities.Count; i++)
         {
-            if(_aiPlanners[i].fleets.IndexOf(fleet) != -1)
+            if(aiEntities[i].fleets.IndexOf(fleet) != -1)
             {
-                if (_aiPlanners[i].fleetCount == 1)
-                    RemoveAIEntity(_aiPlanners[i]);
+                if (aiEntities[i].fleetCount == 1)
+                    RemoveAIEntity(aiEntities[i]);
                 else
                     RemovePointOfInterest(fleet);
 
@@ -270,7 +189,7 @@ public class StarSystem
 
     public Vector3 GetRandomLocation()
     {
-        return GetLocation(_random.Next(-_size, _size));
+        return GetLocation(_random.Next(-size, size));
     }
     /// <summary>
     /// Very high minimumDistanceToOtherCelestial might cause infinite or near infinite loops in generation! Use at own peril!
@@ -282,7 +201,7 @@ public class StarSystem
     {
         Vector3 p = Vector3.zero;
 
-        while (p == Vector3.zero || _celestials.Any(c => Vector3.Distance(c.cell.location, p) < minimumDistanceToOtherCelestial))
+        while (p == Vector3.zero || celestials.Any(c => Vector3.Distance(c.position, p) < minimumDistanceToOtherCelestial))
             p = GetRandomLocation();
 
         return p;

@@ -44,7 +44,7 @@ public static class OverworldManager
         _uiManager.Initialize();
 
         _cameraManager = OverworldCameraManager.getInstance;
-        _cameraManager.JumpTo(PlayerData.fleet.cell.location);
+        _cameraManager.JumpTo(PlayerData.fleet.position);
 
         ToolbarManager.getInstance.Initialize();
 
@@ -119,7 +119,7 @@ public static class OverworldManager
 
         Fleet ef = new Fleet(
             "<color=red>" + efn + "</color>",
-            HexGrid.GetRandom(),
+            RuntimeData.system.GetRandomLocation(),
             new Random(RuntimeData.system.seed),
             1,
             ships);

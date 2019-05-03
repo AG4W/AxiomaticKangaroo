@@ -6,54 +6,50 @@ using System.Linq;
 
 public static class RuntimeData
 {
-    static Save _save;
-    static StarSystem _system;
-    //use to hold data between scenes
-    static LocalMapData _location;
 
-    public static Save save { get { return _save; } }
-    public static StarSystem system { get { return _system; } }
-    public static LocalMapData localMapData { get { return _location; } }
+    public static Save save { get; private set; }
+    public static StarSystem system { get; private set; }
+    public static LocalMapData localMapData { get; private set; }
 
     public static void GenerateNewSystem(int seed = -1)
     {
         if (seed == -1)
             seed = (int)System.DateTime.Now.Ticks;
 
-        _system = new StarSystem(seed);
-        _system.Generate();
+        system = new StarSystem(seed);
+        system.Generate();
 
         OnNewSystem();
     }
-    public static void SetSystem(StarSystem s)
+    public static void SetSystem(StarSystem system)
     {
-        _system = s;
+        RuntimeData.system = system;
 
         OnNewSystem();
     }
 
-    public static void SetLocalMapData(LocalMapData l)
+    public static void SetLocalMapData(LocalMapData lmd)
     {
-        _location = l;
+        localMapData = lmd;
     }
     public static void SetSave(Save save)
     {
-        _save = save;
+        RuntimeData.save = save;
     }
 
     static void OnNewSystem()
     {
         if (PlayerData.fleet == null)
-            PlayerData.Initialize(HexGrid.GetRandom());
+            PlayerData.Initialize(system.GetRandomLocation());
 
-        _location = null;
+        localMapData = null;
     }
 
     public static void OnPlayerDefeat()
     {
         ProgressData.Reset();
 
-        _system = null;
+        system = null;
     }
 }
 public static class PlayerData
@@ -66,9 +62,9 @@ public static class PlayerData
     public static List<ShipComponent> inventory { get { return _inventory; } }
     public static List<Officer> officers { get { return _officers; } }
 
-    public static void Initialize(Cell cell)
+    public static void Initialize(Vector3 position)
     {
-        _fleet = new Fleet("<color=purple>You</color>", cell, new Random(RuntimeData.system.seed), 0, new List<Ship>());
+        _fleet = new Fleet("<color=purple>You</color>", position, new Random(RuntimeData.system.seed), 0, new List<Ship>());
         _inventory = new List<ShipComponent>();
         _officers = new List<Officer>();
 

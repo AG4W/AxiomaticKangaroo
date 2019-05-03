@@ -71,14 +71,14 @@ public class LocalMapData
 
     public void AddCelestial(Celestial c)
     {
-        _localCelestials.Add(new LocalCelestial(c, (c.location - center).normalized));
+        _localCelestials.Add(new LocalCelestial(c, (c.position - center).normalized));
     }
     public void RemoveCelestial(Celestial c)
     {
         _localCelestials.Remove(_localCelestials.FirstOrDefault(lc => lc.celestial == c));
     }
 
-    public void SetFleets(List<Fleet> fleets)
+    public void SetFleets(params Fleet[] fleets)
     {
         _fleets.Clear();
         _fleets.AddRange(fleets);

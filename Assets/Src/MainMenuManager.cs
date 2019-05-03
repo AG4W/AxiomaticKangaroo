@@ -113,6 +113,13 @@ public class MainMenuManager : MonoBehaviour
             null,
             null,
             () => TooltipManager.getInstance.CloseTooltip());
+
+        _media.transform.Find("discord").GetComponent<GenericTooltipHandler>().Initialize(
+            () => TooltipManager.getInstance.OpenTooltip("Join the community!", Input.mousePosition),
+            () => Process.Start("https://discord.gg/pygc2Kw"),
+            null,
+            null,
+            () => TooltipManager.getInstance.CloseTooltip());
     }
     void InitializeMenues()
     {
